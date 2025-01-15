@@ -1,0 +1,179 @@
+---
+title: "PSTAT 231 - Homework 1"
+author: "Kat Le"
+format:
+  html:
+    embed-resources: true 
+    toc_float: true
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE,
+                      warning = FALSE)
+```
+
+## Homework 1
+
+### PSTAT 231
+
+Machine Learning Main Ideas Please answer the following questions. Be sure that your solutions are clearly marked and that your document is neatly formatted.
+
+You don't have to rephrase everything in your own words, but if you quote directly, you should cite whatever materials you use (this can be as simple as "from the lecture/page \# of book").
+
+**Question 1**: Define supervised and unsupervised learning. What are the difference(s) between them?
+
+> Supervised learning is a type of machine learning where the model output has a true value, or label, that is specified within the dataset. The goal of supervised learning to uncover relationships between model input and output. Unsupervised learning is another type of machine learning where the model is trained on a dataset where there are no labeled values. The goal of unsupervised learning is to uncover relationships between predictor variables.
+>
+> The main difference is that in supervised learning, the data includes labeled targets that the model is trained to predict, whereas in unsupervised learning, there are not labeled targets. The model only works with the input data to identify relationships in the dataset.
+
+**Question 2**: Explain the difference between a regression model and a classification model, specifically in the context of machine learning.
+
+> A regression model is used when predicting a continuous numerical value.
+>
+> A classification model is used when predicting a discrete, categorical value.
+
+**Question 3**: Name two commonly used metrics for regression ML problems. Name two commonly used metrics for classification ML problems.
+
+> Regression
+>
+> 1.  *Root Mean Squared Error*: the square root of the average of squared differences between predicted and actual values. It shows how far predictions are from actual values on average.
+>
+> 2.  *Mean Absolute Error*: average of the absolute differences between predict and actual values.
+>
+> Classification
+>
+> 1.  *Accuracy*: number of correct prediction divided by total number of predictions
+>
+> 2.  *Precision*: number of true positives divided by the sum of true and negative positives
+
+**Question 4**: As discussed, statistical models can be used for different purposes. These purposes can generally be classified into the following three categories. Provide a brief description of each.
+
+> *Descriptive models:* These models help us understand relationships between the features of a dataset and the outcome.
+>
+> *Inferential models:* These models are used to make conclusions about a population based on a sample.
+>
+> *Predictive models:* These models are used to estimate future patterns in the data based on historical data.
+
+**Question 5**: A political candidate's campaign has collected some detailed voter history data from their constituents. The campaign is interested in two questions:
+
+1.  Given a voter's profile/data, how likely is it that they will vote in favor of the candidate?
+
+2.  How would a voter's likelihood of support for the candidate change if they had personal contact with the candidate?
+
+Classify each question as either predictive or inferential. Explain your reasoning for each.
+
+> Question 1 is a predictive question because it is asking for a future outcome based on historical patterns.
+>
+> Question 2 is an inferential question because it is trying to understand how a change in events would affect the outcome. There is an intervention within this question, which is why it is not predictive.
+
+## Exploratory Data Analysis
+
+This section will ask you to complete several exercises. For this homework assignment, we'll be working with the mpg data set that is loaded when you load the tidyverse. Make sure you load the tidyverse and any other packages you need.
+
+Exploratory data analysis (or EDA) is not based on a specific set of rules or formulas. It is more of a state of curiosity about data. It's an iterative process of:
+
+-   generating questions about data
+
+-   visualize and transform your data as necessary to get answers
+
+-   use what you learned to generate more questions A couple questions are always useful when you start out.
+
+These are "what variation occurs within the variables," and "what covariation occurs between the variables."
+
+You should use the tidyverse and ggplot2 for these exercises.
+
+```{r message=FALSE}
+# Load tidyverse
+library(tidyverse)
+# Load corrplot for correlation matrix
+library(corrplot)
+
+# Load mpg dataset within tidyverse
+data(mpg)
+```
+
+**Exercise 1**: We are interested in highway miles per gallon, or the hwy variable. Create a histogram of this variable. Describe what you see/learn.
+
+```{r}
+# Create a histogram of highway mpg variable
+ggplot(mpg, aes(x = hwy)) +
+  geom_histogram(binwidth = 2, fill = "navy", color = "black", alpha = 0.7) +
+  labs(title = "Histogram of Highway Miles Per Gallon",
+       x = "Highway Miles Per Gallon (hwy)",
+       y = "Frequency") +
+  theme_minimal()
+```
+
+> From the histogram above, we can see that the distribution is bimodal that looks like it is right-skewed.
+
+**Exercise 2**: Create a scatterplot. Put hwy on the x-axis and cty on the y-axis. Describe what you notice. Is there a relationship between hwy and cty? What does this mean?
+
+```{r}
+# Create a scatterplot with hwy on the x-axis and cty on the y-axis
+ggplot(mpg, aes(x = hwy, y = cty)) +
+  geom_point(color = "navy", alpha = 0.6) +
+  labs(title = "Scatterplot of Highway vs City Miles Per Gallon",
+       x = "Highway Miles Per Gallon (hwy)",
+       y = "City Miles Per Gallon (cty)") +
+  geom_smooth(method = "lm") +
+  annotate("text", 
+           x = 20, 
+           y = 20, 
+           label = paste("R² = ", round(summary(lm(cty ~ hwy, data = mpg))$r.squared, 2)),
+           color = "black", 
+           size = 5) +
+  theme_minimal()
+```
+
+> From the plot above, it looks like there a linear relationship between city miles per gallon and highway miles per gallon. This means that both variables increase proportionally.
+
+**Exercise 3**: Make a bar plot of manufacturer. Flip it so that the manufacturers are on the y-axis. Order the bars by height. Which manufacturer produced the most cars? Which produced the least?
+
+```{r}
+# Count manufacturer observations and plot it by manufacturer.
+mpg %>%
+  count(manufacturer) %>%
+  ggplot(aes(x = reorder(manufacturer, n), y = n)) + 
+  geom_bar(stat = "identity", color = "navy", fill = "navy") +
+# Reorder by descending values
+  coord_flip() +
+  labs(title = "Number of observations for each vehicle manufacturer", 
+       x = "Manufacturer", y = "Count") +
+  theme_minimal()
+```
+
+> The plot above shows that Dodge produced the most cars, and Lincoln produces the least cars in this dataset.
+
+**Exercise 4**: Make a box plot of hwy, grouped by cyl. Use geom_jitter() and the alpha argument to add points to the plot. Describe what you see. Is there a relationship between hwy and cyl? What do you notice?
+
+```{r}
+# Create box plot of hwy and group by cyl
+ggplot(mpg, aes(x = factor(cyl), y = hwy)) +
+  geom_boxplot(color = "navy") +
+  geom_jitter(alpha = 0.2, width = 0.2, color = "navy") + 
+  labs(title = "Box plot of highway miles per gallon by number of cylinders",
+       x = "Number of Cylinders", y = "Highway Miles per Gallon") +
+  theme_minimal()
+```
+
+> According to the plot above, it looks like there is more spread in highway mpg values for 4, 6 and 8 cylinder vehicles. Vehicles that have 5 cylinders have a narrower interquartile range, meaning the values are closely grouped together and there is low variability in vehicles with 5 cylinders. This could be due to less observations of vehicles with 5 cylinders.
+
+**Exercise 5**: Use the corrplot package to make a lower triangle correlation matrix of the mpg dataset. (Hint: You can find information on the package here.)
+
+```{r}
+# Select only numeric data in npg dataset
+numeric_data <- mpg[, sapply(mpg, is.numeric)]
+
+# Create correlation matrix
+matrix_data <- cor(numeric_data)
+
+# Plot the lower triangle of the correlation matrix
+corrplot(matrix_data, method = "circle", type = "lower", tl.col = "black", diag = FALSE)
+```
+
+Which variables are positively or negatively correlated with which others? Do these relationships make sense to you? Are there any that surprise you?
+
+> From the correlation matrix above, we see that cylinders+displacement and city miles per gallon+highway miles per gallon are positively correlated. This makes sense because because a large number of cylinders requires a large engine with more total volume, which means the engine displacement increases. In addition, city miles per gallon and highway miles per gallon are both about fuel efficiency, which makes sense why they are positive correlated.
+>
+> City miles per gallon + displacement, highway miles per gallon + displayment, city miles per gallon + cylinder, and highway miles per gallon+ cylinder are all negatively correlated. These make sense because a larger engine displacement with more cylinders means less fuel efficiency, resulting in lower highway and city miles per gallon.

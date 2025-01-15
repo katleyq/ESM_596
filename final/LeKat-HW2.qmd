@@ -1,0 +1,307 @@
+---
+title: "PSTAT 231 - Homework 2"
+author: "Kat Le"
+format:
+  html:
+    embed-resources: true 
+    toc_float: true
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE,
+                      warning = FALSE)
+```
+
+## Linear Regression and KNN
+
+For this assignment, we will be working with a data set from the UCI (University of California, Irvine) Machine Learning repository ([see website here](http://archive.ics.uci.edu/ml/datasets/Abalone)). The full data set consists of $4,177$ observations of abalone in Tasmania. (Fun fact: [Tasmania](https://en.wikipedia.org/wiki/Tasmania "Tasmania") supplies about $25\%$ of the yearly world abalone harvest.)
+
+![*Fig 1. Inside of an abalone shell.*](../homework-2/images/17612037-abalone-shell-inside.jpg){width="309"}
+
+The age of an abalone is typically determined by cutting the shell open and counting the number of rings with a microscope. The purpose of this data set is to determine whether abalone age (**number of rings + 1.5**) can be accurately predicted using other, easier-to-obtain information about the abalone.
+
+The full abalone data set is located in the `\data` subdirectory. Read it into *R* using `read_csv()`. Take a moment to read through the codebook (`abalone_codebook.txt`) and familiarize yourself with the variable definitions.
+
+Make sure you load the `tidyverse` and `tidymodels`!
+
+```{r message=FALSE}
+# Load relevant libraries
+library(tidyverse)
+library(tidymodels)
+library(kknn)
+library(yardstick)
+library(here)
+library(gt)
+
+# Load abalone data
+abalone <- read_csv(here("homework-2/data/abalone.csv"))
+```
+
+```{r}
+# List first column names and first two observations of dataframe 
+head(abalone, 2) %>% 
+  gt()
+```
+
+### Question 1
+
+Your goal is to predict abalone age, which is calculated as the number of rings plus 1.5. Notice there currently is no `age` variable in the data set. Add `age` to the data set.
+
+```{r}
+# Create new column in abalone dataset named "age" and calculate it by adding 1.5 to ring column
+abalone <- abalone %>% 
+  mutate(age = rings + 1.5,
+         type = as.factor(type)) # Convert type to factor instead of character
+
+# Verify column
+head(abalone, 2) %>% 
+  gt()
+```
+
+Assess and describe the distribution of `age`.
+
+```{r}
+# Create a histogram of age
+ggplot(abalone, aes(x = age)) +
+  geom_histogram(binwidth = 1, fill = "navy", color = "black", alpha = 0.7) +
+  labs(x = "Age", y = "Frequency", title = "Histogram of Age in Abalone Dataset") +
+  theme_minimal()
+```
+
+> The histogram above shows that the age variable is unimodal and right-skewed. It's not completely clear though so we can assess skewness by comparing the mean and median as a test. The test below confirms that it is right-skewed.
+
+```{r}
+# Print mean value
+print(paste("Mean:", mean(abalone$age)))
+
+# Print median value
+print(paste("Median:", median(abalone$age)))
+
+
+```
+
+### Question 2
+
+Split the abalone data into a training set and a testing set. Use stratified sampling. You should decide on appropriate percentages for splitting the data.
+
+*Remember that you'll need to set a seed at the beginning of the document to reproduce your results.*
+
+> First, we'll need to figure out which variable to stratify by.
+
+```{r}
+# Reformat variables as characters for processing then reeshape the data to long format
+abalone_long <- abalone %>%
+  mutate(across(everything(), as.character)) %>%
+  pivot_longer(cols = everything(), names_to = "Variable", values_to = "Value")
+
+# Create facet histogram plots with a conditional check for numeric and categorical variables
+ggplot(abalone_long, aes(x = Value)) +
+  # Filter variables for numeric data types for plotting
+  geom_histogram(data = subset(abalone_long, sapply(Value, is.numeric)),
+                 fill = "navy", color = "black") +
+  # Filter variables for categorical data types for plotting
+  geom_bar(data = subset(abalone_long, !sapply(Value, is.numeric)), 
+           fill = "navy", color = "black") +
+  facet_wrap(~ Variable, scales = "free") +
+  labs(title = "Histograms/Bar Charts of Variables in Abalone Dataset", 
+       x = "Value", y = "Frequency") +
+  theme_minimal()
+```
+
+> Since there seems to be more observations with very high or very low ages, we'll stratify by age.
+
+```{r}
+# Set seed for reproducibility purposes
+set.seed(123)
+
+# Split the data with stratified sampling
+split <- initial_split(abalone, prop = 0.75, strata = age)
+
+# Subset training set
+abalone_train <- training(split)
+
+# Subset testing set
+abalone_test <- testing(split)
+```
+
+### Question 3
+
+Using the **training** data, create a recipe predicting the outcome variable, `age`, with all other predictor variables. Note that you **should not** include `rings` to predict `age`. *Explain why you shouldn't use `rings` to predict `age`.*
+
+Steps for your recipe:
+
+1.  dummy code any categorical predictors
+
+2.  create interactions between
+
+    -   `type` and `shucked_weight`,
+    -   `longest_shell` and `diameter`,
+    -   `shucked_weight` and `shell_weight`
+
+3.  center all predictors, and
+
+4.  scale all predictors.
+
+You'll need to investigate the `tidymodels` documentation to find the appropriate step functions to use.
+
+```{r}
+# Create the recipe
+recipe_age <- recipe(age ~ ., data = abalone_train) %>%
+  step_rm(rings) %>%  # Remove the `rings` variable
+  step_interact(  # Create interactions
+    terms = ~ type:shucked_weight + 
+             longest_shell:diameter + 
+             shucked_weight:shell_weight
+  ) %>%
+  step_dummy(all_nominal(), -all_outcomes()) %>%  # Dummy code categorical predictors
+  step_center(all_predictors()) %>%  # Center all predictors
+  step_scale(all_predictors())       # Scale all predictors
+
+```
+
+> Rings should not be included to predict age because age was created as a function of rings. It does not represent collected data and will skew the results.
+
+### Question 4
+
+Create and store a linear regression object using the `"lm"` engine.
+
+```{r}
+# Define a linear regression model using the "lm" engine
+linear_mod <- linear_reg() %>% 
+  set_engine("lm")
+```
+
+### Question 5
+
+Create and store a KNN object using the `"kknn"` engine. Specify `k = 7`.
+
+```{r}
+# Define a KNN model with k = 7 using the "kknn" engine
+knn_mod <- nearest_neighbor(neighbors = 7) %>% 
+  set_engine("kknn") %>%                       
+  set_mode("regression")                         
+
+```
+
+### Question 6
+
+Now, for each of these models (linear regression and KNN):
+
+1.  set up an empty workflow,
+2.  add the model, and
+3.  add the recipe that you created in Question 3.
+
+Note that you should be setting up two separate workflows.
+
+Fit both models to the training set.
+
+> Linear Regression Model
+
+```{r}
+# Set up workflow for Linear Regression
+lm_workflow <- workflow() %>% 
+  add_model(linear_mod) %>%  
+  add_recipe(recipe_age)     
+
+# Fit the lm workflow to the training data
+lm_workflow_fit <- lm_workflow %>% 
+  fit(data = abalone_train)
+```
+
+> KNN Model
+
+```{r}
+# Set up workflow for Linear Regression
+knn_workflow <- workflow() %>% 
+  add_model(knn_mod) %>%  
+  add_recipe(recipe_age)  
+
+
+# Fit the knn workflow to the training data
+knn_workflow_fit <- knn_workflow %>% 
+  fit(data = abalone_train)
+```
+
+### Question 7
+
+Use your linear regression `fit()` object to predict the age of a hypothetical female abalone with longest_shell = 0.50, diameter = 0.10, height = 0.30, whole_weight = 4, shucked_weight = 1, viscera_weight = 2, and shell_weight = 1.
+
+```{r}
+# Create a new data frame with the hypothetical abalone values
+new_individual <- tibble(
+  type = factor("F", levels = c("F", "I", "M")),
+  longest_shell = 0.50,
+  diameter = 0.10,
+  height = 0.30,
+  whole_weight = 4,
+  shucked_weight = 1,
+  viscera_weight = 2,
+  shell_weight = 1,
+  rings = NA
+)
+
+# Use the lm_workflow_fit to predict age for the new data
+predicted_age <- predict(lm_workflow_fit, new_individual)
+
+# Print the predicted age as a gt table
+predicted_age %>% 
+  gt() %>%
+  cols_label(.pred = "Predicted Age")
+```
+
+### Question 8
+
+Now you want to assess your models' performance. To do this, use the `yardstick` package:
+
+1.  Create a metric set that includes *R^2^*, RMSE (root mean squared error), and MAE (mean absolute error).
+2.  Use `augment()` to create a tibble of your model's predicted values from the **testing data** along with the actual observed ages (these are needed to assess your model's performance).
+3.  Finally, apply your metric set to the tibble, report the results, and interpret the *R\^2* value.
+
+Repeat these steps once for the linear regression model and for the KNN model.
+
+> Linear Regression:
+>
+> According to the results below, the linear model results in an RMSE of 2.21 and MAE of 1.55. The R\^2 value is 0.54, which means that this linear model explain 54% of the variance in the testing data.
+
+```{r}
+# Create a metric set object that includes R2, RMSE, MAE
+lm_metric_set <- metric_set(rsq, rmse, mae)
+
+# Create dataframe of model predictions on test data
+lm_predicted_data <- augment(lm_workflow_fit, new_data = abalone_test)
+
+# Collect performance metrics from model
+lm_metrics <- lm_predicted_data %>%
+  metrics(truth = age, estimate = .pred)
+
+# Print metrics
+lm_metrics %>% 
+  gt()
+```
+
+> KNN Model
+>
+> > According to the results below, the linear model results in an RMSE of 2.35 and MAE of 1.62. The R\^2 value is 0.48, which means that this knn model explain 48% of the variance in the testing data.
+
+```{r}
+# Create a metric set object that includes R2, RMSE, MAE
+knn_metric_set <- metric_set(rsq, rmse, mae)
+
+# Create dataframe of model predictions on test data
+knn_predicted_data <- augment(knn_workflow_fit, new_data = abalone_test)
+
+# Collect performance metrics from model
+knn_metrics <- knn_predicted_data %>%
+  metrics(truth = age, estimate = .pred)
+
+# Print metrics
+knn_metrics %>% 
+  gt()
+```
+
+### Question 9
+
+Which model performed better on the testing data? Explain why you think this might be. Are you surprised by any of your results? Why or why not?
+
+> Based on the results above, the linear model outperforms the KNN model on the abalone_test data. We know this because the linear model has a lower RMSE, higher R2, and lower MAE. A lower RMSE means that the linear model performed better at minimizing squared errors. A higher R2 means that the linear model explained more of the variance in the testing data. Finally, a lower MAE means that the linear model predicts were closer to the true values on average. The linear model may have performed better than the knn model because there's a linear relationship between the features and the target variable. The difference in performance between the two models is not significant however. Knn may perform better if we chose a different number of clusters (or K value).

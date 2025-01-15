@@ -1,0 +1,443 @@
+---
+title: "PSTAT 231 - Homework 3"
+author: "Kat Le"
+format:
+  html:
+    embed-resources: true 
+    toc_float: true
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE,
+                      warning = FALSE)
+```
+
+## Binary Classification
+
+For this assignment, we will be working with part of a [Kaggle data set](https://www.kaggle.com/c/titanic/overview) that was the subject of a machine learning competition and is often used for practicing ML models. The goal is classification; specifically, to predict which passengers would survive the [Titanic shipwreck](https://en.wikipedia.org/wiki/Titanic).
+
+![Fig. 1: RMS Titanic departing Southampton on April 10, 1912.](../homework-3-/images/RMS_Titanic.jpg){width="363"}
+
+Load the data from `data/titanic.csv` into *R* and familiarize yourself with the variables it contains using the codebook (`data/titanic_codebook.txt`).
+
+Notice that `survived` and `pclass` should be changed to factors. When changing `survived` to a factor, you may want to reorder the factor so that *"Yes"* is the first level.
+
+Make sure you load the `tidyverse` and `tidymodels`!
+
+*Remember that you'll need to set a seed at the beginning of the document to reproduce your results.*
+
+```{r message=FALSE}
+# Set seed for reproducibility
+set.seed(123)
+
+# Load relevant libraries
+library(tidyverse)
+library(tidymodels)
+library(kknn)
+library(yardstick)
+library(here)
+library(corrr)
+library(corrplot)
+library(discrim)
+library(poissonreg)
+library(gt)
+
+# Load titanic data
+titanic <- read_csv(here("homework-3-/data/titanic.csv"))
+
+# Convert survived and pclass column to factor 
+titanic <- titanic %>% 
+  mutate(survived = factor(survived, levels = c('Yes', 'No')),
+         pclass = factor(pclass))
+```
+
+### Question 1
+
+Split the data, stratifying on the outcome variable, `survived.` You should choose the proportions to split the data into. Verify that the training and testing data sets have the appropriate number of observations. Take a look at the training data and note any potential issues, such as missing data.
+
+```{r}
+# Split titatnic data and stratify by survived column
+titanic_split <- initial_split(titanic, prop = 0.75,
+                                strata = survived)
+
+# Extract training data
+titanic_train <- training(titanic_split)
+
+# Extract testing data
+titanic_test <- testing(titanic_split)
+
+# Verify that training set has the appropriate observations by printing dimensions of each set
+dimensions <- data.frame(
+  data = c("titanic_train", "titatnic_test"),
+  dimensions = c(paste(dim(titanic_train), collapse = "x"), 
+                 paste(dim(titanic_test), collapse = "x"))
+)
+
+# Print html table
+dimensions %>% 
+  gt() %>% 
+  tab_header(
+    title = "Dimensions of Titanic Training and Testing Splits"
+  )
+```
+
+```{r}
+# Look at the number of NAs in each column
+data.frame(names(titanic), colSums(is.na(titanic))) %>% 
+  set_names(c("Columns", "# of NAs")) %>%
+  gt() %>% 
+  tab_header(
+    title = "Missing Values in Titanic Dataset"
+  )
+```
+
+Why is it a good idea to use stratified sampling for this data?
+
+> It is a good idea to stratify using the 'survived' column because there is a class imbalance for this variable. There are significantly more observations of people who survived than people who died in the dataset.
+
+### Question 2
+
+Using the **training** data set, explore/describe the distribution of the outcome variable `survived`.
+
+> According to the results below, it looks like there are signficantly more observations in the training set of people who survived than people who died on the titanic in the training set, even though the dataset was stratified by the survived column.
+
+```{r}
+# Summarize the distribution of survived variable
+survived_summary <- titanic_train %>%
+  group_by(survived) %>%
+  summarise(
+    Count = n(),
+    Proportion = Count / nrow(titanic)
+  )
+
+# Visualize the distribution of survived
+ggplot(data = titanic_train, aes(x = factor(survived))) +
+  geom_bar(fill = c("#E74C3C", "#2ECC71")) +
+  scale_x_discrete(labels = c("Did Not Survive", "Survived")) +
+  labs(
+    title = "Distribution of Survival on the Titanic",
+    x = "Survival Status",
+    y = "Count"
+  ) +
+  theme_classic()
+```
+
+Create a [percent stacked bar chart](https://r-graph-gallery.com/48-grouped-barplot-with-ggplot2) (recommend using `ggplot`) with `survived` on the *x*-axis and `fill = sex`. Do you think `sex` will be a good predictor of the outcome?
+
+> From the results below, it looks like sex may be a good predictor of survival status since there is a significant difference in the proportion of females to males in both survival outcomes. It looks like more males died than females. This could be due to social expectations of saving women and children first.
+
+```{r}
+# Create stacked bar chart of sex by survival outcome
+ggplot(titanic_train, aes(x = survived, fill = sex)) +
+  geom_bar(position = "stack") +
+  labs(y = "Count",
+       x = "Survived",
+       title = "Survival Count of Observations Organized by Sex") +
+  scale_fill_manual(name = "Sex",
+                      values = c("grey", "navy")) + 
+  theme_classic()
+```
+
+Create one more percent stacked bar chart of `survived`, this time with `fill = pclass`. Do you think passenger class will be a good predictor of the outcome?
+
+> From the results below, it looks like pclass could also be a good predictor of survival status. This is because there are significantly more people with a 3rd class ticket that died than 1st or 2nd class. This is expected because richer people have more resources to survive.
+
+```{r}
+# Create stacked bar chart of ticket class by survival outcome
+ggplot(titanic_train, aes(x = survived, fill = pclass)) +
+  geom_bar(position = "stack") +
+  labs(y = "Count",
+       x = "Survived",
+       title = "Survival Count of Observations Organized by Ticket Class") +
+  scale_fill_manual(
+    name = "Ticket Class",
+    values = c("lightblue", "grey", "navy")) + 
+  theme_classic()
+```
+
+Why do you think it might be more useful to use a [percent stacked bar chart](https://r-graph-gallery.com/48-grouped-barplot-with-ggplot2) as opposed to a traditional stacked bar chart?
+
+> It may be more useful to use a percent stacked bar chart to assess the proportional difference between the predictors within each outcome.
+
+### Question 3
+
+Using the **training** data set, create a correlation matrix of all continuous variables. Visualize the matrix and describe any patterns you see. Are any predictors correlated with each other? Which ones, and in which direction?
+
+> From the results below, it seems that parch (number of parents / children) and sib_sp (number of siblings / spouses) are positively correlated with each other as signified by a larger, darker blue circle in the correlation matrix. This is expected because both variables describe family size. In other words, passengers with spouses or siblings may be related to passengers with parents or children. This could lead to redundancy in its effect on outcome. To remedy this, we could combine these two predictors into one feature called family_size.
+
+```{r}
+# Select numeric variables within taining set, create correlation matrix, then plot
+titanic_train %>% 
+  select_if(is.numeric) %>% 
+  cor() %>% 
+  corrplot()
+```
+
+### Question 4
+
+Using the **training** data, create a recipe predicting the outcome variable `survived`. Include the following predictors: ticket class, sex, age, number of siblings or spouses aboard, number of parents or children aboard, and passenger fare.
+
+Recall that there were missing values for `age`. To deal with this, add an imputation step using `step_impute_linear()`. Next, use `step_dummy()` to **dummy** encode categorical predictors. Finally, include interactions between:
+
+-   Sex and passenger fare, and
+-   Age and passenger fare.
+
+You'll need to investigate the `tidymodels` documentation to find the appropriate step functions to use.
+
+```{r}
+# Create recipe using predictors in question 4.
+titanic_recipe <- recipe(survived ~ pclass + sex + age + sib_sp + 
+                           parch + fare, data = titanic_train) %>%
+  step_impute_linear(age) %>% # Interpolate age using linear model
+  step_dummy(all_nominal_predictors()) %>% # Encode categorical predictors
+  step_interact(terms = ~ sex_male:fare) %>% # Set interaction between sex_male and fare
+  step_interact(terms = ~ age:fare) # Set interaction between age and fare
+```
+
+### Question 5
+
+Specify a **logistic regression** model for classification using the `"glm"` engine. Then create a workflow. Add your model and the appropriate recipe. Finally, use `fit()` to apply your workflow to the **training** data.
+
+***Hint: Make sure to store the results of `fit()`. You'll need them later on.***
+
+```{r}
+# Specify logistic regression engine for classification
+log_reg <- logistic_reg() %>% 
+  set_engine("glm") %>% 
+  set_mode("classification")
+
+# Create workflow for logistic regression with recipe specified above
+titanic_wkflow_lr <- workflow() %>% 
+  add_model(log_reg) %>% 
+  add_recipe(titanic_recipe)
+
+# Apply workflow to training data
+titanic_fit_lr <- fit(titanic_wkflow_lr, titanic_train)
+```
+
+### Question 6
+
+**Repeat Question 5**, but this time specify a linear discriminant analysis model for classification using the `"MASS"` engine.
+
+```{r}
+# Specify linear discrminant analysis model engine
+lda_mod <- discrim_linear() %>% 
+  set_mode("classification") %>% 
+  set_engine("MASS")
+
+# Create workflow for linear discriminant analysis with recipe specified above
+titanic_wkflow_lda <- workflow() %>% 
+  add_model(lda_mod) %>% 
+  add_recipe(titanic_recipe)
+
+# Apply workflow to training data
+titanic_fit_lda <- fit(titanic_wkflow_lda, titanic_train)
+```
+
+### Question 7
+
+**Repeat Question 5**, but this time specify a quadratic discriminant analysis model for classification using the `"MASS"` engine.
+
+```{r}
+# Specify quadratic discriminant analysis model engine
+qda_mod <- discrim_quad() %>% 
+  set_mode("classification") %>% 
+  set_engine("MASS")
+
+# Create workflow for quadratic discriminant analysis with recipe specified above
+titanic_wkflow_qda <- workflow() %>% 
+  add_model(qda_mod) %>% 
+  add_recipe(titanic_recipe)
+
+# Apply workflow to training data
+titanic_fit_qda <- fit(titanic_wkflow_qda, titanic_train)
+```
+
+### Question 8
+
+**Repeat Question 5**, but this time specify a *k*-nearest neighbors model for classification using the `"kknn"` engine. Choose a value for *k* to try.
+
+```{r}
+# Specify k-nearest neighbor model for classification engine
+knn_mod <- nearest_neighbor(neighbors = 8) %>% 
+  set_engine("kknn") %>%
+  set_mode("classification")
+
+# Create workflow for knn with recipe specified above
+titanic_wkflow_knn <- workflow() %>% 
+  add_model(knn_mod) %>% 
+  add_recipe(titanic_recipe)
+
+# Apply workflow to training data
+titanic_fit_knn <- fit(titanic_wkflow_knn, titanic_train)
+```
+
+### Question 9
+
+Now you've fit four different models to your training data.
+
+Use `predict()` and `bind_cols()` to generate predictions using each of these 4 models and your **training** data. Then use the metric of **area under the ROC curve** to assess the performance of each of the four models.
+
+```{r}
+# Use logistic regression model created above to predict on training data and attach survived column
+pred_lr_train <- predict(titanic_fit_lr, titanic_train, type = "prob") %>%
+  bind_cols(titanic_train %>% 
+              select(survived))
+
+# Use linear discriminant analysis model created above to predict on training data and attach survived column
+pred_lda_train <- predict(titanic_fit_lda, titanic_train, type = "prob") %>% 
+  bind_cols(titanic_train %>% 
+              select(survived))
+
+# Use quadratic discriminant analysis model created above to predict on training data and attach survived column
+pred_qda_train <- predict(titanic_fit_qda, titanic_train, type = "prob") %>% 
+  bind_cols(titanic_train %>% 
+              select(survived))
+
+# Use k-nearest neighbor model created above to predict on training data and attach survived column
+pred_knn_train <- predict(titanic_fit_knn, titanic_train, type = "prob") %>% 
+  bind_cols(titanic_train %>% 
+              select(survived))
+
+# Calculate ROC-AUC for logistic regression
+auc_lr_train <- roc_auc(pred_lr_train, truth = survived, .pred_Yes)
+
+# Calculate ROC-AUC for linear discriminant analysis
+auc_lda_train <- roc_auc(pred_lda_train, truth = survived, .pred_Yes)
+
+# Calculate ROC-AUC for quadratic discriminant analysis
+auc_qda_train <- roc_auc(pred_qda_train, truth = survived, .pred_Yes)
+
+# Calculate ROC-AUC for k-nearest neighbor model
+auc_knn_train <- roc_auc(pred_knn_train, truth = survived, .pred_Yes)
+
+# Create table of area under curve results for each model
+training_results_df <- rbind(auc_lr_train,
+                    auc_lda_train,
+                    auc_qda_train, 
+                    auc_knn_train) %>% 
+  mutate(method = c("Logistic Regression", 
+                    "Linear Discriminant Analysis",
+                    "Quadratic Discriminant Analysis", 
+                    "KNN")) %>% 
+  select(method, .metric, .estimate)
+
+# Print results
+training_results_df %>% 
+  gt() %>% 
+  tab_header(
+    title = "Model Performance Comparison for Training Data"
+  )
+```
+
+### Question 10
+
+Fit all four models to your **testing** data and report the AUC of each model on the **testing** data. Which model achieved the highest AUC on the **testing** data?
+
+```{r}
+# Use logistic regression model created above to predict on testing data and attach survived column
+pred_lr_test <- predict(titanic_fit_lr, titanic_test, type = "prob") %>%
+  bind_cols(titanic_test %>% select(survived))
+
+# Use linear discriminant analysis model created above to predict on testing data and attach survived column
+pred_lda_test <- predict(titanic_fit_lda, titanic_test, type = "prob") %>%
+  bind_cols(titanic_test %>% select(survived))
+
+# Use quadratic discriminant analysis model created above to predict on testing data and attach survived column
+pred_qda_test <- predict(titanic_fit_qda, titanic_test, type = "prob") %>%
+  bind_cols(titanic_test %>% select(survived))
+
+# Use k-nearest neighbor model created above to predict on testing data and attach survived column
+pred_knn_test <- predict(titanic_fit_knn, titanic_test, type = "prob") %>%
+  bind_cols(titanic_test %>% select(survived))
+
+# Calculate ROC-AUC for logistic regression
+auc_lr_test <- roc_auc(pred_lr_test, truth = survived, .pred_Yes)
+
+# Calculate ROC-AUC for linear discriminant analysis
+auc_lda_test <- roc_auc(pred_lda_test, truth = survived, .pred_Yes)
+
+# Calculate ROC-AUC for quadratic discriminant analysis
+auc_qda_test <- roc_auc(pred_qda_test, truth = survived, .pred_Yes)
+
+# Calculate ROC-AUC for k-nearest neighbor model
+auc_knn_test <- roc_auc(pred_knn_test, truth = survived, .pred_Yes)
+
+# Create table of area under curve results for each model
+test_results_df <- rbind(auc_lr_test,
+                    auc_lda_test,
+                    auc_qda_test, 
+                    auc_knn_test) %>% 
+  mutate(method = c("Logistic Regression", 
+                    "Linear Discriminant Analysis",
+                    "Quadratic Discriminant Analysis", 
+                    "KNN")) %>% 
+  select(method, .metric, .estimate)
+
+# Print results
+test_results_df %>% 
+  gt() %>% 
+  tab_header(
+    title = "Model Performance Comparison for Testing Data"
+  )
+```
+
+Using your top-performing model, create a confusion matrix and visualize it. Create a plot of its ROC curve.
+
+> By a small margin, the K-nearest neighbor model outperformed all other models. We'll use this model to construct a confusion matrix and visualize the ROC curve.
+
+```{r}
+# Create confusion matrix for knn model performance on testing data
+conf_matrix <- predict(titanic_fit_knn, titanic_test, type = "class") %>%
+  bind_cols(titanic_test %>% select(survived)) %>%
+  conf_mat(truth = survived, estimate = .pred_class)
+
+# Plot confusion matrix
+conf_matrix %>% 
+  autoplot(type = 'heatmap') +
+  ggtitle("Confusion Matrix of KNN Model Performance")
+```
+
+```{r}
+# Create ROC-AUC for knn model
+roc_curve(pred_knn_test, truth = survived, .pred_Yes) %>% 
+  autoplot() +
+  ggtitle("ROC-AUC of KNN Model Performance")
+```
+
+How did your best model perform? Compare its **training** and **testing** AUC values. If the values differ, why do you think this is so?
+
+> KNN performed the best on this titatnic dataset.The AUC value for KNN model when using training data was `r round(auc_knn_train[3], 3)`. The AUC value for KNN model when using testing data was `r round(auc_knn_test[3], 3)`. When applying the model to predict survival status on the testing data, the AUC was lower. It is possible that the model was overfitting the data it was trained on so when applied to a new dataset, or the testing data, it did not generalize well. To remedy this, we could have used cross-validation to split the data further to make sure that the model was not overfitting the data.
+
+### Question 11
+
+In a binary classification problem, let $p$ represent the probability of class label $1$, which implies that $1 - p$ represents the probability of class label $0$. The *logistic function* (also called the "inverse logit") is the cumulative distribution function of the logistic distribution, which maps a real number *z* to the open interval $(0, 1)$.
+
+Given that:
+
+$$
+p(z)=\frac{e^z}{1+e^z}
+$$
+
+Prove that the inverse of a logistic function is indeed the *logit* function:
+
+$$
+z(p)=ln\left(\frac{p}{1-p}\right)
+$$
+
+To prove that the inverse of p(z) is the logit function, we need to isolate z using the following steps:
+
+$$
+p(z){(1+e^z)}={e^z}
+$$ $$
+{p+pe^z}={e^z}
+$$ $$
+p=e^z-pe^z
+$$ $$
+p=e^z(1-p)
+$$ $$
+e^z=\frac{p}{1-p}
+$$ Now that we almost have z alone, we can take the log of both sides to turn it into the logit function.$$
+z=ln\left(\frac{p}{1-p}\right)
+$$
