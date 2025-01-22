@@ -911,7 +911,7 @@ county_data <- county_data %>%
   )
 ```
 
-## [Step 1]{.underline}: inspect the data
+## [Step 1]{.underline}: Inspect the data
 
 *Visualize distribution of outcome to see if there's a **class imbalance***
 
