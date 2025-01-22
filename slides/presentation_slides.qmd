@@ -1,0 +1,1157 @@
+---
+title: "ESM 596 Presentation"
+subtitle: "Statistical Machine Learning Methods"
+format:
+  revealjs:
+    theme: default
+    slide-number: true
+    chalkboard: 
+      buttons: false
+    preview-links: auto
+    css: styles.css
+    footer: 'ESM 596 Presentation'
+    html-math-method:
+      method: mathjax
+      url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          tex: {
+            tags: 'ams'
+          }
+        };
+        </script>
+---
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# Load required libraries
+library(tidyverse)
+library(MASS)
+library(gridExtra)
+library(gt)
+library(pROC)
+library(patchwork)
+```
+
+## Overview
+
+In this presentation, we will discuss:
+
+-   Linear Discriminant Analysis
+-   Quadratic Discriminant Analysis
+-   Accuracy Metrics in Machine Learning
+-   Machine Learning Workflow in R Using Tidymodels
+
+# Linear Discriminant Analysis:
+
+Mathematical Foundations and Environmental Applications
+
+## What is Linear Discriminant Analysis?
+
+-   A *supervised* dimensionality reduction and *classification* technique
+-   Projects high-dimensional data onto a lower-dimensional space while maximizing class separability
+-   Particularly effective when classes have different means but similar covariance structures
+
+## Core Objective
+
+-   Find a linear combination of features that characterizes/separates two or more classes
+-   Maximize the ratio of between-class variance to within-class variance
+
+------------------------------------------------------------------------
+
+### Consider this classification problem
+
+*You are concerned about air quality in CA counties. You wonder, can I create a ML model that can identify if a county needs air quality intervention based on particulate matter and percent green space?*
+
+```{r}
+gt_table <- data.frame(
+  `County_ID` = c(101, 102, 103, 104, "New County", "New County"),
+  `Intervention` = c("Yes", "No", "Yes", "No", "?", "?"),
+  `PM_25` = c(12.5, 15.8, 9.7, 18.2, "19.5", "21.2"),
+  `Green_Space_Percent` = c(35.4, 22.1, 48.7, 19.3, "47.3", "13.2")
+)
+
+# Create a gt table
+gt_table %>%
+  gt() %>%
+  tab_header(
+    title = "California Counties Environmental Data",
+    subtitle = "Air Quality and Green Space Metrics"
+  ) %>%
+  fmt_number(
+    columns = c(`PM_25`, `Green_Space_Percent`), # Updated syntax for column selection
+    decimals = 1
+  ) %>%
+  cols_label(
+    `County_ID` = "County ID",
+    `Intervention` = "Intervention",
+    `PM_25` = "PM 2.5 (µg/m³)",
+    `Green_Space_Percent` = "Green Space (%)"
+  ) %>%
+  cols_align(
+    align = "center",
+    columns = everything()
+  )
+
+
+```
+
+------------------------------------------------------------------------
+
+```{r}
+# Set random seed for reproducibility
+set.seed(123)
+
+# Generate synthetic data for three classes
+n_points <- 100
+
+# Healthy air quality data (low PM2.5, high green space)
+healthy_class <- mvrnorm(n = n_points, 
+                        mu = c(15, 45),  # PM2.5 (very low), green space (very high)
+                        Sigma = matrix(c(25, 10, 10, 25), nrow = 2))
+healthy_df <- data.frame(healthy_class) %>%
+  mutate(intervention_status = "Healthy") %>%
+  rename(pm25 = X1, green_space = X2)
+
+# Moderate air quality data (medium PM2.5, medium green space)
+moderate_class <- mvrnorm(n = n_points, 
+                         mu = c(30, 35),  # PM2.5 (medium), green space (medium)
+                         Sigma = matrix(c(25, 10, 10, 25), nrow = 2))
+moderate_df <- data.frame(moderate_class) %>%
+  mutate(intervention_status = "Moderate") %>%
+  rename(pm25 = X1, green_space = X2)
+
+# Needs Intervention air quality data (high PM2.5, low green space)
+intervention_class <- mvrnorm(n = n_points, 
+                            mu = c(40, 15),  # PM2.5 (high), green space (low)
+                            Sigma = matrix(c(25, 10, 10, 25), nrow = 2))
+intervention_df <- data.frame(intervention_class) %>%
+  mutate(intervention_status = "Needs Intervention") %>%
+  rename(pm25 = X1, green_space = X2)
+
+# Combine datasets
+data <- rbind(healthy_df, moderate_df, intervention_df)
+
+# For use in tidymodels demo
+county_data <- rbind(healthy_df, moderate_df, intervention_df)
+
+# Create plot
+ggplot(data, aes(x = pm25, y = green_space),
+       color = "black") +
+  geom_point(alpha = 0.6) +
+  theme_minimal() +
+  labs(title = "California Counties Environmental Data",
+       x = "Particulate Matter 2.5 (µg/m³)",
+       y = "Green Space %") +
+  theme(legend.position = "bottom",
+        plot.title = element_text(size = 15,
+                                  hjust = 0.5,
+                                  face = "bold"),
+        plot.subtitle = element_text(hjust = 0.5))
+```
+
+------------------------------------------------------------------------
+
+```{r}
+# Create plot
+ggplot(data, aes(x = pm25, y = green_space),
+       color = "black") +
+  geom_point(alpha = 0.6) +
+  theme_minimal() +
+  labs(title = "California Counties Environmental Data",
+       x = "Particulate Matter 2.5 (µg/m³)",
+       y = "Green Space %") +
+  theme(legend.position = "bottom",
+        plot.title = element_text(size = 15,
+                                  hjust = 0.5,
+                                  face = "bold"),
+        plot.subtitle = element_text(hjust = 0.5))+
+  geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
+  scale_color_manual(name = "Legend", 
+                     values = c("Decision Boundary" = "red")) +
+  annotate("text", 
+           x = max(data$pm25)*0.9, y = max(data$green_space)*0.95, 
+           label = "LDA Decision Boundary", 
+           color = "red", 
+           fontface = "bold", 
+           size = 4, 
+           hjust = 1, vjust = 1)
+```
+
+------------------------------------------------------------------------
+
+## Key Components
+
+-   Within-class scatter matrix (Sw)
+-   Between-class scatter matrix (Sb)
+-   Projection matrix (W)
+
+------------------------------------------------------------------------
+
+## LDA: Optimizing for W
+
+The objective is to find W that maximizes:
+
+$$J(W) = \frac{|W^T S_b W|}{|W^T S_w W|} $$
+
+In descriptive words:
+
+\vspace{1em}
+
+$$ 
+{\scriptsize J(\text{Projection}) = \frac{\text{Projected Between-Class Scatter Volume}}{\text{Projected Within-Class Scatter Volume}}}
+$$
+
+------------------------------------------------------------------------
+
+## Within-Class Scatter Matrix
+
+$$S_w = \sum_{i=1}^c \sum_{x \in C_i} (x - \mu_i)(x - \mu_i)^T$$
+
+where:
+
+-   c is the number of classes
+-   Ci is the set of samples in class i
+-   μi is the mean of class i
+
+------------------------------------------------------------------------
+
+```{r}
+# Calculate intervention_status means
+class_means <- data %>%
+  group_by(intervention_status) %>%
+  summarise(mean_pm25 = mean(pm25),
+            mean_green_space = mean(green_space))
+
+# Calculate distances from points to their class means
+data_with_distances <- data %>%
+  left_join(class_means, by = "intervention_status") %>%
+  mutate(dist_to_mean = sqrt((pm25 - mean_pm25)^2 + (green_space - mean_green_space)^2))
+
+# Create main scatter plot
+main_plot <- ggplot(data_with_distances, aes(x = pm25, y = green_space, 
+                                            color = intervention_status)) +
+  geom_point(alpha = 0.6) +
+  geom_point(data = class_means, aes(x = mean_pm25, y = mean_green_space), 
+             color = "red", size = 4, shape = "cross") +
+  geom_segment(aes(xend = mean_pm25, yend = mean_green_space), 
+               alpha = 0.2) +
+  scale_color_manual(values = c("Healthy" = "#82ca9d", 
+                               "Moderate" = "#ffd700",
+                               "Needs Intervention" = "#ff7f7f")) +
+  theme_minimal() +
+  labs(title = "Within-Class Scatter Matrix Visualization",
+       subtitle = "Points connected to their class means",
+       x = "PM2.5 Level (µg/m³)",
+       y = "Green Space %") +
+  theme(legend.position = "bottom",
+        plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))
+
+# Create density plots for each dimension
+pm25_density <- ggplot(data, aes(x = pm25, fill = intervention_status)) +
+  geom_density(alpha = 0.5) +
+  scale_fill_manual(values = c("Healthy" = "#82ca9d", 
+                              "Moderate" = "#ffd700",
+                              "Needs Intervention" = "#ff7f7f")) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "PM2.5 Distribution")
+
+green_space_density <- ggplot(data, aes(x = green_space, 
+                                        fill = intervention_status)) +
+  geom_density(alpha = 0.5) +
+  scale_fill_manual(values = c("Healthy" = "#82ca9d", 
+                              "Moderate" = "#ffd700",
+                              "Needs Intervention" = "#ff7f7f")) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "Green Space Distribution")
+
+# Calculate scatter matrices for each class
+calculate_scatter_matrix <- function(df, mean_vector) {
+  pm25_centered <- df$pm25 - mean_vector[1]
+  green_space_centered <- df$green_space - mean_vector[2]
+  scatter_matrix <- matrix(c(
+    sum(pm25_centered^2), sum(pm25_centered * green_space_centered),
+    sum(pm25_centered * green_space_centered), sum(green_space_centered^2)
+  ), nrow = 2)
+  return(scatter_matrix)
+}
+
+# Calculate scatter matrices for each class
+healthy_scatter <- calculate_scatter_matrix(
+  filter(data, intervention_status == "Healthy"),
+  c(class_means$mean_pm25[1], class_means$mean_green_space[1])
+)
+
+moderate_scatter <- calculate_scatter_matrix(
+  filter(data, intervention_status == "Moderate"),
+  c(class_means$mean_pm25[2], class_means$mean_green_space[2])
+)
+
+intervention_scatter <- calculate_scatter_matrix(
+  filter(data, intervention_status == "Needs Intervention"),
+  c(class_means$mean_pm25[3], class_means$mean_green_space[3])
+)
+
+# Total within-class scatter matrix
+total_scatter <- healthy_scatter + moderate_scatter + intervention_scatter
+
+# Arrange plots
+grid.arrange(
+  main_plot, pm25_density, green_space_density,
+  layout_matrix = rbind(c(1,1), c(2,3)),
+  heights = c(3,1)
+)
+```
+
+------------------------------------------------------------------------
+
+## Between-Class Scatter Matrix
+
+$$S_b = \sum_{i=1}^c N_i(\mu_i - \mu)(\mu_i - \mu)^T$$
+
+where:
+
+-   Ni is the number of samples in class i
+-   μ is the overall mean
+
+------------------------------------------------------------------------
+
+```{r}
+# Calculate class means and global mean
+class_means <- data %>%
+  group_by(intervention_status) %>%
+  summarise(mean_pm25 = mean(pm25),
+            mean_green_space = mean(green_space))
+
+global_mean <- data %>%
+  summarise(mean_pm25 = mean(pm25),
+            mean_green_space = mean(green_space))
+
+# Calculate between-class scatter matrix
+calculate_between_scatter <- function(class_means, global_mean, n_points) {
+  scatter_matrix <- matrix(0, nrow = 2, ncol = 2)
+  
+  for(i in 1:nrow(class_means)) {
+    mean_diff_pm25 <- class_means$mean_pm25[i] - global_mean$mean_pm25
+    mean_diff_green_space <- class_means$mean_green_space[i] - global_mean$mean_green_space
+    mean_diff <- c(mean_diff_pm25, mean_diff_green_space)
+    
+    scatter_matrix <- scatter_matrix + 
+      n_points * (mean_diff %*% t(mean_diff))
+  }
+  
+  return(scatter_matrix)
+}
+
+between_scatter <- calculate_between_scatter(class_means, global_mean, n_points)
+
+# Create main scatter plot
+main_plot <- ggplot() +
+  # Plot points
+  geom_point(data = data, aes(x = pm25, y = green_space, color = intervention_status), alpha = 0.6) +
+  # Plot class means
+  geom_point(data = class_means, aes(x = mean_pm25, y = mean_green_space),
+             color = "red", size = 4, shape = "cross") +
+  # Plot global mean
+  geom_point(data = global_mean, aes(x = mean_pm25, y = mean_green_space),
+             color = "black", size = 6, shape = "diamond") +
+  # Add lines from class means to global mean
+  geom_segment(data = class_means,
+               aes(x = mean_pm25, y = mean_green_space,
+                   xend = global_mean$mean_pm25, 
+                   yend = global_mean$mean_green_space),
+               color = "red", size = 1, linetype = "dashed") +
+  scale_color_manual(values = c("Healthy" = "#82ca9d", 
+                               "Moderate" = "#ffd700",
+                               "Needs Intervention" = "#ff7f7f")) +
+  theme_minimal() +
+  labs(title = "Between-Class Scatter Matrix Visualization",
+       subtitle = "Class means (red crosses) connected to global mean (black diamond)",
+       x = "PM2.5 Level (µg/m³)",
+       y = "Percent Green Space %") +
+  theme(legend.position = "bottom",
+        plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))
+
+# Create density plots for each dimension
+pm25_density <- ggplot(data, aes(x = pm25, fill = intervention_status)) +
+  geom_density(alpha = 0.5) +
+  geom_vline(data = class_means, aes(xintercept = mean_pm25),
+             color = "red", linetype = "dashed") +
+  geom_vline(data = global_mean, aes(xintercept = mean_pm25),
+             color = "black", linetype = "dashed") +
+  scale_fill_manual(values = c("Healthy" = "#82ca9d", 
+                              "Moderate" = "#ffd700",
+                              "Needs Intervention" = "#ff7f7f")) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "PM2.5 Distribution")
+
+green_space_density <- ggplot(data, aes(x = green_space, fill = intervention_status)) +
+  geom_density(alpha = 0.5) +
+  geom_vline(data = class_means, aes(xintercept = mean_green_space),
+             color = "red", linetype = "dashed") +
+  geom_vline(data = global_mean, aes(xintercept = mean_green_space),
+             color = "black", linetype = "dashed") +
+  scale_fill_manual(values = c("Healthy" = "#82ca9d", 
+                              "Moderate" = "#ffd700",
+                              "Needs Intervention" = "#ff7f7f")) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "Green Space Distribution")
+
+# Calculate eigenvalues and eigenvectors
+eigen_decomp <- eigen(between_scatter)
+
+# Create arrow plot showing direction of maximum separation
+arrow_data <- data.frame(
+  x = global_mean$mean_pm25,
+  y = global_mean$mean_green_space,
+  dx = eigen_decomp$vectors[1,1] * sqrt(eigen_decomp$values[1]),
+  dy = eigen_decomp$vectors[2,1] * sqrt(eigen_decomp$values[1]))
+
+# Arrange plots
+grid.arrange(
+  main_plot, pm25_density, green_space_density,
+  layout_matrix = rbind(c(1,1), c(2,3)),
+  heights = c(3,1)
+)
+```
+
+------------------------------------------------------------------------
+
+## LDA: Optimizing for W
+
+The objective is to find W that maximizes:
+
+$$J(W) = \frac{|W^T S_b W|}{|W^T S_w W|} $$
+
+In descriptive words:
+
+$$ 
+J(\text{Projection}) = \frac{\text{Projected Between-Class Scatter Volume}}{\text{Projected Within-Class Scatter Volume}}
+$$
+
+------------------------------------------------------------------------
+
+## Key Assumptions
+
+-   Data is normally distributed
+-   Classes have similar covariance matrices
+-   Features are not perfectly correlated
+
+------------------------------------------------------------------------
+
+## Limitations and Considerations
+
+-   Linearity assumption may not hold for complex environmental relationships
+-   Sensitive to outliers
+-   Class balance important
+
+# Quadratic Discriminant Analysis
+
+------------------------------------------------------------------------
+
+## What is Quadratic Discriminant Analysis?
+
+-   Classification method that allows for different covariance matrices between classes
+-   Similar to Linear Discriminant Analysis, but uses quadratic decision boundaries
+-   More flexible than LDA but requires more parameters to be estimated
+-   Particularly useful when class distributions have different shapes/spreads
+
+## QDA: Optimizing for k
+
+QDA assigns a data point to the group that gives the highest score using this formula:
+
+$$
+\begin{align*}
+\delta_k(x) = & \overbrace{-\frac{1}{2}\log|\Sigma_k|}^{\text{Covariance Shape}} \\
+              & + \overbrace{-\frac{1}{2}(x-\mu_k)^T\Sigma_k^{-1}(x-\mu_k)}^{\text{Within Class Scatter}} \\
+              & + \overbrace{\log(\pi_k)}^{\text{Between Class Scatter}}
+\end{align*}
+$$
+
+------------------------------------------------------------------------
+
+## Decision:
+
+Choose the group (k) with the highest score - that's your classification!
+
+------------------------------------------------------------------------
+
+## Key Assumptions
+
+-   Each class follows a multivariate normal distribution
+-   Classes can have different covariance matrices
+-   Sufficient sample size for each class to estimate covariance matrices
+-   No perfect multicollinearity among predictors
+
+## QDA vs LDA: Key Differences
+
+-   QDA allows different covariance matrices for each class
+-   Decision boundaries are quadratic (curved) rather than linear
+
+```{r plot-center, echo=FALSE, fig.align='center'}
+# Set seed for reproducibility
+set.seed(123)
+
+# Generate datasets with different covariance patterns
+n_points <- 200
+
+# Positive covariance
+pos_cov <- mvrnorm(n = n_points, 
+                   mu = c(0, 0),
+                   Sigma = matrix(c(1, 0.8, 0.8, 1), 
+                                  nrow = 2))
+
+# Negative covariance
+neg_cov <- mvrnorm(n = n_points, 
+                   mu = c(0, 0),
+                   Sigma = matrix(c(1, -0.8, -0.8, 1), 
+                                  nrow = 2))
+
+# Zero covariance
+zero_cov <- mvrnorm(n = n_points, 
+                    mu = c(0, 0),
+                    Sigma = matrix(c(1, 0, 0, 1), 
+                                   nrow = 2))
+
+# Strong positive covariance
+strong_pos_cov <- mvrnorm(n = n_points, 
+                         mu = c(0, 0),
+                         Sigma = matrix(c(1, 0.95, 0.95, 1), 
+                                        nrow = 2))
+
+# Create data frames
+pos_df <- data.frame(x = pos_cov[,1], 
+                     y = pos_cov[,2], 
+                    type = "Positive Covariance\n(σxy = 0.8)")
+neg_df <- data.frame(x = neg_cov[,1], 
+                     y = neg_cov[,2], 
+                    type = "Negative Covariance\n(σxy = -0.8)")
+zero_df <- data.frame(x = zero_cov[,1], 
+                      y = zero_cov[,2], 
+                     type = "Zero Covariance\n(σxy = 0)")
+strong_df <- data.frame(x = strong_pos_cov[,1], 
+                        y = strong_pos_cov[,2], 
+                       type = "Strong Positive Covariance\n(σxy = 0.95)")
+
+# Combine all datasets
+all_data <- rbind(pos_df, neg_df, zero_df, strong_df)
+
+# Create visualization
+plot <- ggplot(all_data, aes(x = x, y = y)) +
+  geom_point(alpha = 0.5, color = "#4286f4") +
+  stat_ellipse(color = "#ff4b4b", size = 1) +
+  facet_wrap(~type, scales = "free", ncol = 2) +
+  theme_minimal() +
+  labs(title = "Visual Examples of Covariance",
+       subtitle = "Points with 95% confidence ellipses",
+       x = "Variable X",
+       y = "Variable Y") +
+  theme(plot.title = element_text(hjust = 0.5, size = 16),
+        plot.subtitle = element_text(hjust = 0.5),
+        strip.text = element_text(size = 12))
+
+# Add mean lines
+plot_with_means <- plot +
+  geom_vline(xintercept = 0, linetype = "dashed", 
+             color = "gray50", alpha = 0.5) +
+  geom_hline(yintercept = 0, linetype = "dashed", 
+             color = "gray50", alpha = 0.5)
+
+
+
+# Display plot
+plot_with_means
+
+```
+
+------------------------------------------------------------------------
+
+```{r}
+# Set random seed for reproducibility
+set.seed(123)
+
+# Generate synthetic data with different covariance structures
+n_points <- 200
+
+# Class 1
+class1 <- mvrnorm(n = n_points, 
+                  mu = c(2, 2), 
+                  Sigma = matrix(c(2, 0, 0, 0.5), nrow = 2))
+class1_df <- data.frame(class1) %>%
+  mutate(class = "Class 1") %>%
+  rename(x = X1, y = X2)
+
+# Class 2
+class2 <- mvrnorm(n = n_points, 
+                  mu = c(4, 4), 
+                  Sigma = matrix(c(0.5, 0, 0, 2), nrow = 2))
+class2_df <- data.frame(class2) %>%
+  mutate(class = "Class 2") %>%
+  rename(x = X1, y = X2)
+
+# Combine datasets
+data <- rbind(class1_df, class2_df)
+
+# Fit QDA model
+qda_model <- qda(class ~ x + y, data = data)
+
+# Create grid for decision boundary
+grid_points <- 100
+x_range <- range(data$x)
+y_range <- range(data$y)
+grid <- expand.grid(
+  x = seq(x_range[1] - 1, x_range[2] + 1, length.out = grid_points),
+  y = seq(y_range[1] - 1, y_range[2] + 1, length.out = grid_points)
+)
+
+# Predict over grid
+grid$pred <- predict(qda_model, grid)$class
+
+# Create main plot
+main_plot <- ggplot() +
+  # Plot decision boundary
+  geom_tile(data = grid, aes(x = x, y = y, fill = pred), alpha = 0.3) +
+  # Plot points
+  geom_point(data = data, aes(x = x, y = y, color = class), alpha = 0.6) +
+  # Add confidence ellipses
+  stat_ellipse(data = data, aes(x = x, y = y, color = class),
+               type = "norm", level = 0.95) +
+  scale_color_manual(values = c("Class 1" = "#8884d8", "Class 2" = "#82ca9d")) +
+  scale_fill_manual(values = c("Class 1" = "#8884d8", "Class 2" = "#82ca9d")) +
+  theme_minimal() +
+  labs(title = "QDA Decision Boundary Visualization",
+       subtitle = "Different covariance structures with 95% confidence ellipses",
+       x = "Feature 1",
+       y = "Feature 2") +
+  theme(legend.position = "bottom")
+
+# Create density plots
+x_density <- ggplot(data, aes(x = x, fill = class)) +
+  geom_density(alpha = 0.5) +
+  scale_fill_manual(values = c("Class 1" = "#8884d8", "Class 2" = "#82ca9d")) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "Distribution along Feature 1")
+
+y_density <- ggplot(data, aes(x = y, fill = class)) +
+  geom_density(alpha = 0.5) +
+  scale_fill_manual(values = c("Class 1" = "#8884d8", "Class 2" = "#82ca9d")) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "Distribution along Feature 2")
+
+# Create comparison with LDA
+lda_model <- lda(class ~ x + y, data = data)  # Fixed formula here too
+grid$lda_pred <- predict(lda_model, grid)$class
+
+lda_plot <- ggplot() +
+  geom_tile(data = grid, aes(x = x, y = y, fill = lda_pred), alpha = 0.3) +
+  geom_point(data = data, aes(x = x, y = y, color = class), alpha = 0.6) +
+  stat_ellipse(data = data, aes(x = x, y = y, color = class),
+               type = "norm", level = 0.95) +
+  scale_color_manual(values = c("Class 1" = "#8884d8", "Class 2" = "#82ca9d")) +
+  scale_fill_manual(values = c("Class 1" = "#8884d8", "Class 2" = "#82ca9d")) +
+  theme_minimal() +
+  labs(title = "LDA Decision Boundary Comparison",
+       x = "Feature 1",
+       y = "Feature 2") +
+  theme(legend.position = "bottom")
+
+# Performance evaluation
+# Cross-validation function
+cv_qda <- function(data, k = 5) {
+  set.seed(123)
+  folds <- sample(1:k, nrow(data), replace = TRUE)
+  accuracies <- numeric(k)
+  
+  for(i in 1:k) {
+    # Split data
+    train <- data[folds != i, ]
+    test <- data[folds == i, ]
+    
+    # Fit model
+    model <- qda(class ~ x + y, data = train)  # Fixed formula
+    
+    # Predict and calculate accuracy
+    pred <- predict(model, test)$class
+    accuracies[i] <- mean(pred == test$class)
+  }
+  
+  return(mean(accuracies))
+}
+
+# Calculate and print performance metrics
+cv_accuracy <- cv_qda(data)
+#cat("5-fold Cross-validation Accuracy:", cv_accuracy)
+
+# Arrange plots
+grid.arrange(
+  main_plot, lda_plot,
+  x_density, y_density,
+  layout_matrix = rbind(c(1,2), c(3,4)),
+  heights = c(3,1)
+)
+```
+
+------------------------------------------------------------------------
+
+## Best Practices
+
+-   Check assumptions (normality, sample size)
+-   Compare with LDA, QDA and other methods (random forest, knn, etc)
+-   Use cross-validation
+-   Validate model performance
+
+# Using Performance Metrics
+
+to Compare Different ML Models
+
+## How do I compare model performance?
+
+-   Accuracy
+-   Precision
+-   **AUC** ← *We'll focus on this one!*
+
+## Area Under Curve (AUC)
+
+-   It is the area under the **ROC Curve**
+    -   *Receiver Operating Characteristic Curve*
+-   Measures the ability of a classifier to distinguish between classes.
+
+## ROC Curve Calculation
+
+-   **Purpose:** Visualize the trade-off between TPR and FPR at various threshold settings.
+-   **True Positive Rate (TPR)** = $$ ( \frac{\text{True Positives}}{\text{True Positives + False Negatives}} ) $$
+-   **False Positive Rate (FPR)** = $$ ( \frac{\text{False Positives}}{\text{False Positives + True Negatives}} ) $$
+
+## Comparing ML model performance
+
+```{r warning=FALSE, message=FALSE}
+
+# Generate fake probabilities for two models
+n_samples <- 1000
+
+# Create data frame with true labels and predicted probabilities
+data <- tibble(
+  true_label = sample(c(0, 1), n_samples, replace = TRUE, prob = c(0.6, 0.4)),
+  # LDA predictions - more accurate
+  lda_pred = pmax(pmin(rnorm(n_samples, 
+                            mean = ifelse(true_label == 1, 0.7, 0.3), 
+                            sd = 0.2), 1), 0),
+  # QDA predictions - slightly less accurate
+  qda_pred = pmax(pmin(rnorm(n_samples, 
+                            mean = ifelse(true_label == 1, 0.65, 0.35), 
+                            sd = 0.25), 1), 0)
+)
+
+# Calculate ROC curves
+roc_lda <- roc(data$true_label, data$lda_pred)
+roc_qda <- roc(data$true_label, data$qda_pred)
+
+# Create data frames for plotting
+roc_lda_df <- tibble(
+  FPR = 1 - roc_lda$specificities,
+  TPR = roc_lda$sensitivities,
+  Model = "LDA"
+)
+
+roc_qda_df <- tibble(
+  FPR = 1 - roc_qda$specificities,
+  TPR = roc_qda$sensitivities,
+  Model = "QDA"
+)
+
+# Combine the data frames
+roc_data <- bind_rows(roc_lda_df, roc_qda_df)
+
+# Create the plot
+ggplot(roc_data, aes(x = FPR, y = TPR, color = Model)) +
+  geom_line(size = 1.2) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "gray50") +
+  scale_color_manual(values = c("LDA" = "#37123C", "QDA" = "#DDA77B")) +
+  labs(
+    title = "ROC Curves: LDA vs QDA",
+    x = "False Positive Rate",
+    y = "True Positive Rate",
+    caption = sprintf("AUC - LDA: %.3f, QDA: %.3f", 
+                     auc(roc_lda), auc(roc_qda))
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = c(0.85, 0.2),
+    legend.background = element_rect(fill = "white"),
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.caption = element_text(hjust = 0.5)
+  )
+
+```
+
+# Implementing ML Workflow in R
+
+using Tidymodels
+
+## `tidymodels`
+
+-   `tidymodels` is a collection of R packages that helps you do ML work in R using the `tidyverse` framework
+
+------------------------------------------------------------------------
+
+### General steps in `tidymodels` framework
+
+1.  Data inspection
+2.  Data splitting
+3.  Feature engineering with `recipes`
+4.  Model specification
+5.  Workflow Creation
+6.  Model training
+7.  Model Performance Evaluation
+8.  Prediction
+
+------------------------------------------------------------------------
+
+### Let's revisit our initial data
+
+We want to compare LDA vs. QDA performance on our air quality intervention data.
+
+```{r}
+gt_table <- data.frame(
+  `County_ID` = c(101, 102, 103, 104, "New County", "New County"),
+  `Intervention` = c("Yes", "No", "Yes", "No", "?", "?"),
+  `PM_25` = c(12.5, 15.8, 9.7, 18.2, "19.5", "21.2"),
+  `Green_Space_Percent` = c(35.4, 22.1, 48.7, 19.3, "47.3", "13.2")
+)
+
+# Create a gt table
+gt_table %>%
+  gt() %>%
+  tab_header(
+    title = "California Counties Environmental Data",
+    subtitle = "Air Quality and Green Space Metrics"
+  ) %>%
+  fmt_number(
+    columns = c(`PM_25`, `Green_Space_Percent`), # Updated syntax for column selection
+    decimals = 1
+  ) %>%
+  cols_label(
+    `County_ID` = "County ID",
+    `Intervention` = "Intervention",
+    `PM_25` = "PM 2.5 (µg/m³)",
+    `Green_Space_Percent` = "Green Space (%)"
+  ) %>%
+  cols_align(
+    align = "center",
+    columns = everything()
+  )
+```
+
+```{r echo=FALSE}
+set.seed(123)
+
+# Number of rows
+n_counties <- 100
+
+# Generate base variables
+county_data <- tibble(
+  county_id = 1:n_counties,
+  intervention_status = sample(c("Yes", "No"), 
+                 n_counties, replace = TRUE),
+  pm25 = runif(n_counties, min = 5, max = 50)
+)
+
+# Add additional variables with realistic correlations
+county_data <- county_data %>%
+  mutate(
+    percent_green_space = round(100 - pm25 + rnorm(n_counties, 
+                                                   mean = 5, 
+                                                   sd = 10), 2),
+    industrial_emissions = round(pm25 * runif(n_counties, 
+                                              min = 0.6, 
+                                              max = 1.4) + rnorm(n_counties, 
+                                                                 mean = 10, 
+                                                                 sd = 5), 2),
+    vehicle_density = round(runif(n_counties, 
+                                  min = 100, 
+                                  max = 2000), 2), 
+    population_density = round(runif(n_counties, 
+                                     min = 50, 
+                                     max = 5000), 2),
+    average_temperature = round(runif(n_counties, 
+                                      min = 10, 
+                                      max = 30), 2),
+    traffic_flow = round(pm25 * runif(n_counties, 
+                                      min = 15, 
+                                      max = 80) + rnorm(n_counties, 
+                                                        mean = 100, 
+                                                        sd = 50), 2), 
+    energy_consumption = round(runif(n_counties, 
+                                     min = 1, 
+                                     max = 10), 2),
+    industrial_area_percent = round(pm25 * runif(n_counties, 
+                                                 min = 0.4, 
+                                                 max = 1.2) + rnorm(n_counties, 
+                                                                    mean = 5, 
+                                                                    sd = 3), 2),
+    forest_cover_percent = round(100 - pm25 + rnorm(n_counties, 
+                                                    mean = 5, 
+                                                    sd = 10), 2) 
+  )
+
+# Ensure percent_green_space and forest_cover_percent remain within 0-100
+county_data <- county_data %>%
+  mutate(
+    percent_green_space = pmax(pmin(percent_green_space, 100), 0),
+    forest_cover_percent = pmax(pmin(forest_cover_percent, 100), 0)
+  )
+```
+
+## [Step 1]{.underline}: inspect the data
+
+*Visualize distribution of outcome to see if there's a **class imbalance***
+
+```{r}
+# Summarize the distribution of survived variable
+survived_summary <- county_data %>%
+  group_by(intervention_status) %>%
+  summarise(
+    Count = n(),
+    Proportion = Count / nrow(county_data)
+  )
+
+# Visualize the distribution of survived
+ggplot(data = county_data, aes(x = factor(intervention_status))) +
+  geom_bar(fill = c("lightblue", "lightgreen"),
+           color = "black") +
+  scale_x_discrete(labels = c("No, does not need intervention", 
+                              "Yes, needs intervention")) +
+  labs(
+    title = "Distribution of Intervention Status in County Environmental Data",
+    x = "Intervention Status",
+    y = "Count"
+  ) +
+  theme_classic()
+```
+
+## [**Step 1**]{.underline}: Inspect the data
+
+*Create a correlation matrix to understand how your variables are related to each other*
+
+```{r}
+library(corrplot)
+
+county_data %>% 
+  select_if(is.numeric) %>% 
+  cor() %>% 
+  corrplot()
+
+```
+
+## [**Step 2**]{.underline}: Data splitting
+
+*Now that you've explored your data, you can start working with it.*
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(tidymodels) 
+
+set.seed(123) # For reproducibility
+
+# Split data into training and testing sets
+data <- initial_split(county_data, prop = 0.8,
+                      strata = intervention_status)
+
+# Extract training data
+training <- training(data)
+
+# Extract testing data
+testing <- testing(data)
+
+# Create cross-validation folds for use later
+cv_folds <- vfold_cv(training, v = 5, strata = intervention_status)
+
+
+```
+
+## [**Step 3**]{.underline}: Feature engineering with `recipes`
+
+```{r}
+training %>% 
+  head(5) %>% 
+  gt()
+```
+
+## [**Step 3**]{.underline}: Feature engineering with `recipes`
+
+```{r echo=TRUE}
+# Create recipe and pre-process data
+recipe <- recipe(intervention_status ~ .,
+                 data = training) %>% 
+  
+  # Remove unique identifier
+  step_rm(county_id) %>% 
+  
+  # Normalize all numeric predictors
+  step_normalize(all_numeric_predictors()) %>% 
+  
+  # Create interaction terms for related environmental features
+  step_interact(~ forest_cover_percent:percent_green_space) %>%
+  step_interact(~ industrial_emissions:industrial_area_percent) %>%
+  step_interact(~ traffic_flow:vehicle_density) %>% 
+  
+  # Convert class to a factor
+  step_string2factor(all_nominal_predictors()) %>%
+  
+  # Create dummy variables for the outcome (necessary for some models)
+  step_dummy(all_nominal_predictors(), one_hot = TRUE)
+
+
+```
+
+## [**Step 4**]{.underline}: Model specification
+
+```{r echo=TRUE}
+library(discrim)
+
+# Specify LDA model
+lda_spec <- discrim_linear() %>%
+  set_engine("MASS") %>%
+  set_mode("classification")
+
+##################################################
+
+# Specify QDA model
+qda_spec <- discrim_quad() %>%
+  set_engine("MASS") %>%
+  set_mode("classification")
+```
+
+## [**Step 5**]{.underline}: Workflow Creation
+
+```{r echo=TRUE}
+# Create LDA workflow
+lda_workflow <- workflow() %>%
+  add_recipe(recipe) %>%
+  add_model(lda_spec)
+
+##################################################
+
+# Create QDA workflow
+qda_workflow <- workflow() %>%
+  add_recipe(recipe) %>%
+  add_model(qda_spec)
+```
+
+## [**Step 6**]{.underline}: Model training
+
+*Includes cross-validation and tuning hyperparamters*
+
+```{r echo=TRUE}
+# Fit the model using cross-validation
+lda_cv_results <- fit_resamples(
+  lda_workflow,
+  resamples = cv_folds,
+  metrics = metric_set(roc_auc)
+)
+
+# Fit final model on full training data
+lda_final_fit <- fit(lda_workflow, data = training)
+
+# Make predictions on test set
+lda_predictions <- predict(lda_final_fit, new_data = testing)
+lda_class_pred <- predict(lda_final_fit, new_data = testing, type = "prob")
+
+##################################################
+
+# Fit the model using cross-validation
+qda_cv_results <- fit_resamples(
+  qda_workflow,
+  resamples = cv_folds,
+  metrics = metric_set(roc_auc)
+)
+
+# Fit final model on full training data
+qda_final_fit <- fit(qda_workflow, data = training)
+
+# Make predictions on test set
+qda_predictions <- predict(qda_final_fit, new_data = testing)
+qda_class_pred <- predict(qda_final_fit, new_data = testing, type = "prob")
+```
+
+## [**Step 7**]{.underline}: Model performance Evaluation
+
+```{r echo=TRUE}
+# Combine predictions with actual values
+lda_results <- cbind(
+  lda_predictions,
+  lda_class_pred,
+  testing %>% dplyr::select(`intervention_status`)
+) %>% 
+  mutate(intervention_status = as.factor(intervention_status))
+
+
+# Create confusion matrix
+lda_conf_mat <- conf_mat(lda_results, truth = intervention_status, estimate = .pred_class)
+
+# Plot ROC curve
+lda_roc_curve <- lda_results %>%
+  roc_curve(intervention_status, .pred_Yes) %>%
+  autoplot() +
+  labs(title = "LDA ROC Curve")
+
+##################################################
+
+# Combine predictions with actual values
+qda_results <- bind_cols(
+  qda_predictions,
+  qda_class_pred,
+  testing %>% dplyr::select(`intervention_status`)
+) %>% 
+  mutate(intervention_status = as.factor(intervention_status))
+
+# Create confusion matrix
+qda_conf_mat <- conf_mat(qda_results, truth = intervention_status, estimate = .pred_class)
+
+# Plot ROC curve
+qda_roc_curve <- qda_results %>%
+  roc_curve(intervention_status, .pred_Yes) %>%
+  autoplot() +
+  labs(title = "QDA ROC Curve")
+
+```
+
+----
+
+```{r}
+lda_roc_curve + qda_roc_curve
+```
+
+
+
+## [**Step 8**]{.underline}: Prediction
+
+Finally, you can use your QDA workfow on new data!
+
+
+```{r echo=FALSE}
+new_data = county_data
+```
+
+
+```{r echo=TRUE}
+
+# Make predictions on new data using QDA workflow
+qda_predictions <- predict(qda_final_fit, new_data = new_data)
+
+```
+
+## Summary
+
+- Review theory behind LDA and QDA
+- Implemented full LDA and QDA workflow in R using Tidymodels
+
+# Thank you!

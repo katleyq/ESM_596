@@ -1,0 +1,2621 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="presentation_slides_files/libs/clipboard/clipboard.min.js"></script>
+<script src="presentation_slides_files/libs/quarto-html/tabby.min.js"></script>
+<script src="presentation_slides_files/libs/quarto-html/popper.min.js"></script>
+<script src="presentation_slides_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="presentation_slides_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="presentation_slides_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="presentation_slides_files/libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.6.39">
+
+  <title>ESM 596 Presentation</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="presentation_slides_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="presentation_slides_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="presentation_slides_files/libs/revealjs/dist/theme/quarto-bbe7401fe57d4b791b917637bb662036.css">
+  <link rel="stylesheet" href="styles.css">
+  <link href="presentation_slides_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="presentation_slides_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="presentation_slides_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="presentation_slides_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="presentation_slides_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="presentation_slides_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+  <script>
+  window.MathJax = {
+    tex: {
+      tags: 'ams'
+    }
+  };
+  </script>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">ESM 596 Presentation</h1>
+  <p class="subtitle">Statistical Machine Learning Methods</p>
+
+<div class="quarto-title-authors">
+</div>
+
+</section>
+<section id="overview" class="slide level2">
+<h2>Overview</h2>
+<p>In this presentation, we will discuss:</p>
+<ul>
+<li>Linear Discriminant Analysis</li>
+<li>Quadratic Discriminant Analysis</li>
+<li>Accuracy Metrics in Machine Learning</li>
+<li>Machine Learning Workflow in R Using Tidymodels</li>
+</ul>
+</section>
+<section>
+<section id="linear-discriminant-analysis" class="title-slide slide level1 center">
+<h1>Linear Discriminant Analysis:</h1>
+<p>Mathematical Foundations and Environmental Applications</p>
+</section>
+<section id="what-is-linear-discriminant-analysis" class="slide level2">
+<h2>What is Linear Discriminant Analysis?</h2>
+<ul>
+<li>A <em>supervised</em> dimensionality reduction and <em>classification</em> technique</li>
+<li>Projects high-dimensional data onto a lower-dimensional space while maximizing class separability</li>
+<li>Particularly effective when classes have different means but similar covariance structures</li>
+</ul>
+</section>
+<section id="core-objective" class="slide level2">
+<h2>Core Objective</h2>
+<ul>
+<li>Find a linear combination of features that characterizes/separates two or more classes</li>
+<li>Maximize the ratio of between-class variance to within-class variance</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="consider-this-classification-problem">Consider this classification problem</h3>
+<p><em>You are concerned about air quality in CA counties. You wonder, can I create a ML model that can identify if a county needs air quality intervention based on particulate matter and percent green space?</em></p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="audkrykiee" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#audkrykiee table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#audkrykiee thead, #audkrykiee tbody, #audkrykiee tfoot, #audkrykiee tr, #audkrykiee td, #audkrykiee th {
+  border-style: none;
+}
+
+#audkrykiee p {
+  margin: 0;
+  padding: 0;
+}
+
+#audkrykiee .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#audkrykiee .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#audkrykiee .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#audkrykiee .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#audkrykiee .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#audkrykiee .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#audkrykiee .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#audkrykiee .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#audkrykiee .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#audkrykiee .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#audkrykiee .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#audkrykiee .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#audkrykiee .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#audkrykiee .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#audkrykiee .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#audkrykiee .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#audkrykiee .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#audkrykiee .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#audkrykiee .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#audkrykiee .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#audkrykiee .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#audkrykiee .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#audkrykiee .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#audkrykiee .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#audkrykiee .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#audkrykiee .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#audkrykiee .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#audkrykiee .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#audkrykiee .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#audkrykiee .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#audkrykiee .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#audkrykiee .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#audkrykiee .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#audkrykiee .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#audkrykiee .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#audkrykiee .gt_left {
+  text-align: left;
+}
+
+#audkrykiee .gt_center {
+  text-align: center;
+}
+
+#audkrykiee .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#audkrykiee .gt_font_normal {
+  font-weight: normal;
+}
+
+#audkrykiee .gt_font_bold {
+  font-weight: bold;
+}
+
+#audkrykiee .gt_font_italic {
+  font-style: italic;
+}
+
+#audkrykiee .gt_super {
+  font-size: 65%;
+}
+
+#audkrykiee .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#audkrykiee .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#audkrykiee .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#audkrykiee .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#audkrykiee .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#audkrykiee .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#audkrykiee .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+
+<table class="gt_table caption-top" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading header">
+<th colspan="4" class="gt_heading gt_title gt_font_normal">California Counties Environmental Data</th>
+</tr>
+<tr class="gt_heading even">
+<th colspan="4" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border">Air Quality and Green Space Metrics</th>
+</tr>
+<tr class="gt_col_headings header">
+<th id="County ID" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">County ID</th>
+<th id="Intervention" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Intervention</th>
+<th id="PM 2.5 (µg/m³)" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">PM 2.5 (µg/m³)</th>
+<th id="Green Space (%)" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Green Space (%)</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_center" headers="County_ID">101</td>
+<td class="gt_row gt_center" headers="Intervention">Yes</td>
+<td class="gt_row gt_center" headers="PM_25">12.5</td>
+<td class="gt_row gt_center" headers="Green_Space_Percent">35.4</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="County_ID">102</td>
+<td class="gt_row gt_center" headers="Intervention">No</td>
+<td class="gt_row gt_center" headers="PM_25">15.8</td>
+<td class="gt_row gt_center" headers="Green_Space_Percent">22.1</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="County_ID">103</td>
+<td class="gt_row gt_center" headers="Intervention">Yes</td>
+<td class="gt_row gt_center" headers="PM_25">9.7</td>
+<td class="gt_row gt_center" headers="Green_Space_Percent">48.7</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="County_ID">104</td>
+<td class="gt_row gt_center" headers="Intervention">No</td>
+<td class="gt_row gt_center" headers="PM_25">18.2</td>
+<td class="gt_row gt_center" headers="Green_Space_Percent">19.3</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="County_ID">New County</td>
+<td class="gt_row gt_center" headers="Intervention">?</td>
+<td class="gt_row gt_center" headers="PM_25">19.5</td>
+<td class="gt_row gt_center" headers="Green_Space_Percent">47.3</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="County_ID">New County</td>
+<td class="gt_row gt_center" headers="Intervention">?</td>
+<td class="gt_row gt_center" headers="PM_25">21.2</td>
+<td class="gt_row gt_center" headers="Green_Space_Percent">13.2</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+
+<img data-src="presentation_slides_files/figure-revealjs/unnamed-chunk-3-1.png" width="960" class="r-stretch"></section>
+<section class="slide level2">
+
+
+<img data-src="presentation_slides_files/figure-revealjs/unnamed-chunk-4-1.png" width="960" class="r-stretch"></section>
+<section id="key-components" class="slide level2">
+<h2>Key Components</h2>
+<ul>
+<li>Within-class scatter matrix (Sw)</li>
+<li>Between-class scatter matrix (Sb)</li>
+<li>Projection matrix (W)</li>
+</ul>
+</section>
+<section id="lda-optimizing-for-w" class="slide level2">
+<h2>LDA: Optimizing for W</h2>
+<p>The objective is to find W that maximizes:</p>
+<p><span class="math display">\[J(W) = \frac{|W^T S_b W|}{|W^T S_w W|} \]</span></p>
+<p>In descriptive words:</p>
+<p><span class="math display">\[
+{\scriptsize J(\text{Projection}) = \frac{\text{Projected Between-Class Scatter Volume}}{\text{Projected Within-Class Scatter Volume}}}
+\]</span></p>
+</section>
+<section id="within-class-scatter-matrix" class="slide level2">
+<h2>Within-Class Scatter Matrix</h2>
+<p><span class="math display">\[S_w = \sum_{i=1}^c \sum_{x \in C_i} (x - \mu_i)(x - \mu_i)^T\]</span></p>
+<p>where:</p>
+<ul>
+<li>c is the number of classes</li>
+<li>Ci is the set of samples in class i</li>
+<li>μi is the mean of class i</li>
+</ul>
+</section>
+<section class="slide level2">
+
+
+<img data-src="presentation_slides_files/figure-revealjs/unnamed-chunk-5-1.png" width="960" class="r-stretch"></section>
+<section id="between-class-scatter-matrix" class="slide level2">
+<h2>Between-Class Scatter Matrix</h2>
+<p><span class="math display">\[S_b = \sum_{i=1}^c N_i(\mu_i - \mu)(\mu_i - \mu)^T\]</span></p>
+<p>where:</p>
+<ul>
+<li>Ni is the number of samples in class i</li>
+<li>μ is the overall mean</li>
+</ul>
+</section>
+<section class="slide level2">
+
+
+<img data-src="presentation_slides_files/figure-revealjs/unnamed-chunk-6-1.png" width="960" class="r-stretch"></section>
+<section id="lda-optimizing-for-w-1" class="slide level2">
+<h2>LDA: Optimizing for W</h2>
+<p>The objective is to find W that maximizes:</p>
+<p><span class="math display">\[J(W) = \frac{|W^T S_b W|}{|W^T S_w W|} \]</span></p>
+<p>In descriptive words:</p>
+<p><span class="math display">\[
+J(\text{Projection}) = \frac{\text{Projected Between-Class Scatter Volume}}{\text{Projected Within-Class Scatter Volume}}
+\]</span></p>
+</section>
+<section id="key-assumptions" class="slide level2">
+<h2>Key Assumptions</h2>
+<ul>
+<li>Data is normally distributed</li>
+<li>Classes have similar covariance matrices</li>
+<li>Features are not perfectly correlated</li>
+</ul>
+</section>
+<section id="limitations-and-considerations" class="slide level2">
+<h2>Limitations and Considerations</h2>
+<ul>
+<li>Linearity assumption may not hold for complex environmental relationships</li>
+<li>Sensitive to outliers</li>
+<li>Class balance important</li>
+</ul>
+</section></section>
+<section>
+<section id="quadratic-discriminant-analysis" class="title-slide slide level1 center">
+<h1>Quadratic Discriminant Analysis</h1>
+
+</section>
+<section id="what-is-quadratic-discriminant-analysis" class="slide level2">
+<h2>What is Quadratic Discriminant Analysis?</h2>
+<ul>
+<li>Classification method that allows for different covariance matrices between classes</li>
+<li>Similar to Linear Discriminant Analysis, but uses quadratic decision boundaries</li>
+<li>More flexible than LDA but requires more parameters to be estimated</li>
+<li>Particularly useful when class distributions have different shapes/spreads</li>
+</ul>
+</section>
+<section id="qda-optimizing-for-k" class="slide level2">
+<h2>QDA: Optimizing for k</h2>
+<p>QDA assigns a data point to the group that gives the highest score using this formula:</p>
+<p><span class="math display">\[
+\begin{align*}
+\delta_k(x) = &amp; \overbrace{-\frac{1}{2}\log|\Sigma_k|}^{\text{Covariance Shape}} \\
+              &amp; + \overbrace{-\frac{1}{2}(x-\mu_k)^T\Sigma_k^{-1}(x-\mu_k)}^{\text{Within Class Scatter}} \\
+              &amp; + \overbrace{\log(\pi_k)}^{\text{Between Class Scatter}}
+\end{align*}
+\]</span></p>
+</section>
+<section id="decision" class="slide level2">
+<h2>Decision:</h2>
+<p>Choose the group (k) with the highest score - that’s your classification!</p>
+</section>
+<section id="key-assumptions-1" class="slide level2">
+<h2>Key Assumptions</h2>
+<ul>
+<li>Each class follows a multivariate normal distribution</li>
+<li>Classes can have different covariance matrices</li>
+<li>Sufficient sample size for each class to estimate covariance matrices</li>
+<li>No perfect multicollinearity among predictors</li>
+</ul>
+</section>
+<section id="qda-vs-lda-key-differences" class="slide level2">
+<h2>QDA vs LDA: Key Differences</h2>
+<ul>
+<li>QDA allows different covariance matrices for each class</li>
+<li>Decision boundaries are quadratic (curved) rather than linear</li>
+</ul>
+
+<img data-src="presentation_slides_files/figure-revealjs/plot-center-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
+<section class="slide level2">
+
+
+<img data-src="presentation_slides_files/figure-revealjs/unnamed-chunk-7-1.png" width="960" class="r-stretch"></section>
+<section id="best-practices" class="slide level2">
+<h2>Best Practices</h2>
+<ul>
+<li>Check assumptions (normality, sample size)</li>
+<li>Compare with LDA, QDA and other methods (random forest, knn, etc)</li>
+<li>Use cross-validation</li>
+<li>Validate model performance</li>
+</ul>
+</section></section>
+<section>
+<section id="using-performance-metrics" class="title-slide slide level1 center">
+<h1>Using Performance Metrics</h1>
+<p>to Compare Different ML Models</p>
+</section>
+<section id="how-do-i-compare-model-performance" class="slide level2">
+<h2>How do I compare model performance?</h2>
+<ul>
+<li>Accuracy</li>
+<li>Precision</li>
+<li><strong>AUC</strong> ← <em>We’ll focus on this one!</em></li>
+</ul>
+</section>
+<section id="area-under-curve-auc" class="slide level2">
+<h2>Area Under Curve (AUC)</h2>
+<ul>
+<li>It is the area under the <strong>ROC Curve</strong>
+<ul>
+<li><em>Receiver Operating Characteristic Curve</em></li>
+</ul></li>
+<li>Measures the ability of a classifier to distinguish between classes.</li>
+</ul>
+</section>
+<section id="roc-curve-calculation" class="slide level2">
+<h2>ROC Curve Calculation</h2>
+<ul>
+<li><strong>Purpose:</strong> Visualize the trade-off between TPR and FPR at various threshold settings.</li>
+<li><strong>True Positive Rate (TPR)</strong> = <span class="math display">\[ ( \frac{\text{True Positives}}{\text{True Positives + False Negatives}} ) \]</span></li>
+<li><strong>False Positive Rate (FPR)</strong> = <span class="math display">\[ ( \frac{\text{False Positives}}{\text{False Positives + True Negatives}} ) \]</span></li>
+</ul>
+</section>
+<section id="comparing-ml-model-performance" class="slide level2">
+<h2>Comparing ML model performance</h2>
+
+<img data-src="presentation_slides_files/figure-revealjs/unnamed-chunk-8-1.png" width="960" class="r-stretch"></section></section>
+<section>
+<section id="implementing-ml-workflow-in-r" class="title-slide slide level1 center">
+<h1>Implementing ML Workflow in R</h1>
+<p>using Tidymodels</p>
+</section>
+<section id="tidymodels" class="slide level2">
+<h2><code>tidymodels</code></h2>
+<ul>
+<li><code>tidymodels</code> is a collection of R packages that helps you do ML work in R using the <code>tidyverse</code> framework</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="general-steps-in-tidymodels-framework">General steps in <code>tidymodels</code> framework</h3>
+<ol type="1">
+<li>Data inspection</li>
+<li>Data splitting</li>
+<li>Feature engineering with <code>recipes</code></li>
+<li>Model specification</li>
+<li>Workflow Creation</li>
+<li>Model training</li>
+<li>Model Performance Evaluation</li>
+<li>Prediction</li>
+</ol>
+</section>
+<section class="slide level2">
+
+<h3 id="lets-revisit-our-initial-data">Let’s revisit our initial data</h3>
+<p>We want to compare LDA vs.&nbsp;QDA performance on our air quality intervention data.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="qsyttxcnkd" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#qsyttxcnkd table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#qsyttxcnkd thead, #qsyttxcnkd tbody, #qsyttxcnkd tfoot, #qsyttxcnkd tr, #qsyttxcnkd td, #qsyttxcnkd th {
+  border-style: none;
+}
+
+#qsyttxcnkd p {
+  margin: 0;
+  padding: 0;
+}
+
+#qsyttxcnkd .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#qsyttxcnkd .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#qsyttxcnkd .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#qsyttxcnkd .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#qsyttxcnkd .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#qsyttxcnkd .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qsyttxcnkd .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#qsyttxcnkd .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#qsyttxcnkd .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#qsyttxcnkd .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#qsyttxcnkd .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#qsyttxcnkd .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#qsyttxcnkd .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#qsyttxcnkd .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#qsyttxcnkd .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#qsyttxcnkd .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#qsyttxcnkd .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#qsyttxcnkd .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#qsyttxcnkd .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qsyttxcnkd .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#qsyttxcnkd .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#qsyttxcnkd .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#qsyttxcnkd .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qsyttxcnkd .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#qsyttxcnkd .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#qsyttxcnkd .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qsyttxcnkd .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qsyttxcnkd .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#qsyttxcnkd .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qsyttxcnkd .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#qsyttxcnkd .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qsyttxcnkd .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#qsyttxcnkd .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qsyttxcnkd .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#qsyttxcnkd .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qsyttxcnkd .gt_left {
+  text-align: left;
+}
+
+#qsyttxcnkd .gt_center {
+  text-align: center;
+}
+
+#qsyttxcnkd .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#qsyttxcnkd .gt_font_normal {
+  font-weight: normal;
+}
+
+#qsyttxcnkd .gt_font_bold {
+  font-weight: bold;
+}
+
+#qsyttxcnkd .gt_font_italic {
+  font-style: italic;
+}
+
+#qsyttxcnkd .gt_super {
+  font-size: 65%;
+}
+
+#qsyttxcnkd .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#qsyttxcnkd .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#qsyttxcnkd .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#qsyttxcnkd .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#qsyttxcnkd .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#qsyttxcnkd .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#qsyttxcnkd .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+
+<table class="gt_table caption-top" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading header">
+<th colspan="4" class="gt_heading gt_title gt_font_normal">California Counties Environmental Data</th>
+</tr>
+<tr class="gt_heading even">
+<th colspan="4" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border">Air Quality and Green Space Metrics</th>
+</tr>
+<tr class="gt_col_headings header">
+<th id="County ID" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">County ID</th>
+<th id="Intervention" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Intervention</th>
+<th id="PM 2.5 (µg/m³)" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">PM 2.5 (µg/m³)</th>
+<th id="Green Space (%)" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Green Space (%)</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_center" headers="County_ID">101</td>
+<td class="gt_row gt_center" headers="Intervention">Yes</td>
+<td class="gt_row gt_center" headers="PM_25">12.5</td>
+<td class="gt_row gt_center" headers="Green_Space_Percent">35.4</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="County_ID">102</td>
+<td class="gt_row gt_center" headers="Intervention">No</td>
+<td class="gt_row gt_center" headers="PM_25">15.8</td>
+<td class="gt_row gt_center" headers="Green_Space_Percent">22.1</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="County_ID">103</td>
+<td class="gt_row gt_center" headers="Intervention">Yes</td>
+<td class="gt_row gt_center" headers="PM_25">9.7</td>
+<td class="gt_row gt_center" headers="Green_Space_Percent">48.7</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="County_ID">104</td>
+<td class="gt_row gt_center" headers="Intervention">No</td>
+<td class="gt_row gt_center" headers="PM_25">18.2</td>
+<td class="gt_row gt_center" headers="Green_Space_Percent">19.3</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="County_ID">New County</td>
+<td class="gt_row gt_center" headers="Intervention">?</td>
+<td class="gt_row gt_center" headers="PM_25">19.5</td>
+<td class="gt_row gt_center" headers="Green_Space_Percent">47.3</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="County_ID">New County</td>
+<td class="gt_row gt_center" headers="Intervention">?</td>
+<td class="gt_row gt_center" headers="PM_25">21.2</td>
+<td class="gt_row gt_center" headers="Green_Space_Percent">13.2</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="step-1-inspect-the-data" class="slide level2">
+<h2><u>Step 1</u>: inspect the data</h2>
+<p><em>Visualize distribution of outcome to see if there’s a <strong>class imbalance</strong></em></p>
+
+<img data-src="presentation_slides_files/figure-revealjs/unnamed-chunk-11-1.png" width="960" class="r-stretch"></section>
+<section id="step-1-inspect-the-data-1" class="slide level2">
+<h2><u><strong>Step 1</strong></u>: Inspect the data</h2>
+<p><em>Create a correlation matrix to understand how your variables are related to each other</em></p>
+
+<img data-src="presentation_slides_files/figure-revealjs/unnamed-chunk-12-1.png" width="960" class="r-stretch"></section>
+<section id="step-2-data-splitting" class="slide level2">
+<h2><u><strong>Step 2</strong></u>: Data splitting</h2>
+<p><em>Now that you’ve explored your data, you can start working with it.</em></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a><span class="fu">library</span>(tidymodels) </span>
+<span id="cb1-2"><a href=""></a></span>
+<span id="cb1-3"><a href=""></a><span class="fu">set.seed</span>(<span class="dv">123</span>) <span class="co"># For reproducibility</span></span>
+<span id="cb1-4"><a href=""></a></span>
+<span id="cb1-5"><a href=""></a><span class="co"># Split data into training and testing sets</span></span>
+<span id="cb1-6"><a href=""></a>data <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(county_data, <span class="at">prop =</span> <span class="fl">0.8</span>,</span>
+<span id="cb1-7"><a href=""></a>                      <span class="at">strata =</span> intervention_status)</span>
+<span id="cb1-8"><a href=""></a></span>
+<span id="cb1-9"><a href=""></a><span class="co"># Extract training data</span></span>
+<span id="cb1-10"><a href=""></a>training <span class="ot">&lt;-</span> <span class="fu">training</span>(data)</span>
+<span id="cb1-11"><a href=""></a></span>
+<span id="cb1-12"><a href=""></a><span class="co"># Extract testing data</span></span>
+<span id="cb1-13"><a href=""></a>testing <span class="ot">&lt;-</span> <span class="fu">testing</span>(data)</span>
+<span id="cb1-14"><a href=""></a></span>
+<span id="cb1-15"><a href=""></a><span class="co"># Create cross-validation folds for use later</span></span>
+<span id="cb1-16"><a href=""></a>cv_folds <span class="ot">&lt;-</span> <span class="fu">vfold_cv</span>(training, <span class="at">v =</span> <span class="dv">5</span>, <span class="at">strata =</span> intervention_status)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-3-feature-engineering-with-recipes" class="slide level2">
+<h2><u><strong>Step 3</strong></u>: Feature engineering with <code>recipes</code></h2>
+<div class="cell">
+<div class="cell-output-display">
+<div id="thcdtlvqjt" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#thcdtlvqjt table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#thcdtlvqjt thead, #thcdtlvqjt tbody, #thcdtlvqjt tfoot, #thcdtlvqjt tr, #thcdtlvqjt td, #thcdtlvqjt th {
+  border-style: none;
+}
+
+#thcdtlvqjt p {
+  margin: 0;
+  padding: 0;
+}
+
+#thcdtlvqjt .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#thcdtlvqjt .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#thcdtlvqjt .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#thcdtlvqjt .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#thcdtlvqjt .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#thcdtlvqjt .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#thcdtlvqjt .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#thcdtlvqjt .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#thcdtlvqjt .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#thcdtlvqjt .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#thcdtlvqjt .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#thcdtlvqjt .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#thcdtlvqjt .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#thcdtlvqjt .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#thcdtlvqjt .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#thcdtlvqjt .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#thcdtlvqjt .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#thcdtlvqjt .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#thcdtlvqjt .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#thcdtlvqjt .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#thcdtlvqjt .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#thcdtlvqjt .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#thcdtlvqjt .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#thcdtlvqjt .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#thcdtlvqjt .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#thcdtlvqjt .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#thcdtlvqjt .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#thcdtlvqjt .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#thcdtlvqjt .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#thcdtlvqjt .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#thcdtlvqjt .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#thcdtlvqjt .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#thcdtlvqjt .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#thcdtlvqjt .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#thcdtlvqjt .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#thcdtlvqjt .gt_left {
+  text-align: left;
+}
+
+#thcdtlvqjt .gt_center {
+  text-align: center;
+}
+
+#thcdtlvqjt .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#thcdtlvqjt .gt_font_normal {
+  font-weight: normal;
+}
+
+#thcdtlvqjt .gt_font_bold {
+  font-weight: bold;
+}
+
+#thcdtlvqjt .gt_font_italic {
+  font-style: italic;
+}
+
+#thcdtlvqjt .gt_super {
+  font-size: 65%;
+}
+
+#thcdtlvqjt .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#thcdtlvqjt .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#thcdtlvqjt .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#thcdtlvqjt .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#thcdtlvqjt .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#thcdtlvqjt .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#thcdtlvqjt .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+
+<table class="gt_table caption-top" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="county_id" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">county_id</th>
+<th id="intervention_status" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">intervention_status</th>
+<th id="pm25" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">pm25</th>
+<th id="percent_green_space" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">percent_green_space</th>
+<th id="industrial_emissions" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">industrial_emissions</th>
+<th id="vehicle_density" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">vehicle_density</th>
+<th id="population_density" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">population_density</th>
+<th id="average_temperature" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">average_temperature</th>
+<th id="traffic_flow" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">traffic_flow</th>
+<th id="energy_consumption" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">energy_consumption</th>
+<th id="industrial_area_percent" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">industrial_area_percent</th>
+<th id="forest_cover_percent" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">forest_cover_percent</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_right" headers="county_id">7</td>
+<td class="gt_row gt_left" headers="intervention_status">No</td>
+<td class="gt_row gt_right" headers="pm25">46.149718</td>
+<td class="gt_row gt_right" headers="percent_green_space">51.00</td>
+<td class="gt_row gt_right" headers="industrial_emissions">69.18</td>
+<td class="gt_row gt_right" headers="vehicle_density">1138.21</td>
+<td class="gt_row gt_right" headers="population_density">2468.05</td>
+<td class="gt_row gt_right" headers="average_temperature">25.26</td>
+<td class="gt_row gt_right" headers="traffic_flow">3110.55</td>
+<td class="gt_row gt_right" headers="energy_consumption">1.66</td>
+<td class="gt_row gt_right" headers="industrial_area_percent">46.70</td>
+<td class="gt_row gt_right" headers="forest_cover_percent">44.26</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="county_id">8</td>
+<td class="gt_row gt_left" headers="intervention_status">No</td>
+<td class="gt_row gt_right" headers="pm25">32.393074</td>
+<td class="gt_row gt_right" headers="percent_green_space">55.93</td>
+<td class="gt_row gt_right" headers="industrial_emissions">34.73</td>
+<td class="gt_row gt_right" headers="vehicle_density">815.24</td>
+<td class="gt_row gt_right" headers="population_density">2415.22</td>
+<td class="gt_row gt_right" headers="average_temperature">28.07</td>
+<td class="gt_row gt_right" headers="traffic_flow">1181.53</td>
+<td class="gt_row gt_right" headers="energy_consumption">2.23</td>
+<td class="gt_row gt_right" headers="industrial_area_percent">41.92</td>
+<td class="gt_row gt_right" headers="forest_cover_percent">69.10</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="county_id">11</td>
+<td class="gt_row gt_left" headers="intervention_status">No</td>
+<td class="gt_row gt_right" headers="pm25">47.088491</td>
+<td class="gt_row gt_right" headers="percent_green_space">52.16</td>
+<td class="gt_row gt_right" headers="industrial_emissions">47.59</td>
+<td class="gt_row gt_right" headers="vehicle_density">1298.47</td>
+<td class="gt_row gt_right" headers="population_density">294.61</td>
+<td class="gt_row gt_right" headers="average_temperature">10.08</td>
+<td class="gt_row gt_right" headers="traffic_flow">2179.01</td>
+<td class="gt_row gt_right" headers="energy_consumption">2.83</td>
+<td class="gt_row gt_right" headers="industrial_area_percent">52.67</td>
+<td class="gt_row gt_right" headers="forest_cover_percent">67.02</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="county_id">13</td>
+<td class="gt_row gt_left" headers="intervention_status">No</td>
+<td class="gt_row gt_right" headers="pm25">7.732426</td>
+<td class="gt_row gt_right" headers="percent_green_space">81.09</td>
+<td class="gt_row gt_right" headers="industrial_emissions">16.21</td>
+<td class="gt_row gt_right" headers="vehicle_density">1353.28</td>
+<td class="gt_row gt_right" headers="population_density">1848.14</td>
+<td class="gt_row gt_right" headers="average_temperature">27.33</td>
+<td class="gt_row gt_right" headers="traffic_flow">254.66</td>
+<td class="gt_row gt_right" headers="energy_consumption">8.62</td>
+<td class="gt_row gt_right" headers="industrial_area_percent">13.74</td>
+<td class="gt_row gt_right" headers="forest_cover_percent">83.37</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="county_id">15</td>
+<td class="gt_row gt_left" headers="intervention_status">No</td>
+<td class="gt_row gt_right" headers="pm25">37.426832</td>
+<td class="gt_row gt_right" headers="percent_green_space">72.77</td>
+<td class="gt_row gt_right" headers="industrial_emissions">52.19</td>
+<td class="gt_row gt_right" headers="vehicle_density">1024.96</td>
+<td class="gt_row gt_right" headers="population_density">3887.72</td>
+<td class="gt_row gt_right" headers="average_temperature">16.28</td>
+<td class="gt_row gt_right" headers="traffic_flow">648.78</td>
+<td class="gt_row gt_right" headers="energy_consumption">7.34</td>
+<td class="gt_row gt_right" headers="industrial_area_percent">26.55</td>
+<td class="gt_row gt_right" headers="forest_cover_percent">65.94</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="step-3-feature-engineering-with-recipes-1" class="slide level2">
+<h2><u><strong>Step 3</strong></u>: Feature engineering with <code>recipes</code></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href=""></a><span class="co"># Create recipe and pre-process data</span></span>
+<span id="cb2-2"><a href=""></a>recipe <span class="ot">&lt;-</span> <span class="fu">recipe</span>(intervention_status <span class="sc">~</span> .,</span>
+<span id="cb2-3"><a href=""></a>                 <span class="at">data =</span> training) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-4"><a href=""></a>  </span>
+<span id="cb2-5"><a href=""></a>  <span class="co"># Remove unique identifier</span></span>
+<span id="cb2-6"><a href=""></a>  <span class="fu">step_rm</span>(county_id) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-7"><a href=""></a>  </span>
+<span id="cb2-8"><a href=""></a>  <span class="co"># Normalize all numeric predictors</span></span>
+<span id="cb2-9"><a href=""></a>  <span class="fu">step_normalize</span>(<span class="fu">all_numeric_predictors</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-10"><a href=""></a>  </span>
+<span id="cb2-11"><a href=""></a>  <span class="co"># Create interaction terms for related environmental features</span></span>
+<span id="cb2-12"><a href=""></a>  <span class="fu">step_interact</span>(<span class="sc">~</span> forest_cover_percent<span class="sc">:</span>percent_green_space) <span class="sc">%&gt;%</span></span>
+<span id="cb2-13"><a href=""></a>  <span class="fu">step_interact</span>(<span class="sc">~</span> industrial_emissions<span class="sc">:</span>industrial_area_percent) <span class="sc">%&gt;%</span></span>
+<span id="cb2-14"><a href=""></a>  <span class="fu">step_interact</span>(<span class="sc">~</span> traffic_flow<span class="sc">:</span>vehicle_density) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-15"><a href=""></a>  </span>
+<span id="cb2-16"><a href=""></a>  <span class="co"># Convert class to a factor</span></span>
+<span id="cb2-17"><a href=""></a>  <span class="fu">step_string2factor</span>(<span class="fu">all_nominal_predictors</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb2-18"><a href=""></a>  </span>
+<span id="cb2-19"><a href=""></a>  <span class="co"># Create dummy variables for the outcome (necessary for some models)</span></span>
+<span id="cb2-20"><a href=""></a>  <span class="fu">step_dummy</span>(<span class="fu">all_nominal_predictors</span>(), <span class="at">one_hot =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-4-model-specification" class="slide level2">
+<h2><u><strong>Step 4</strong></u>: Model specification</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a><span class="fu">library</span>(discrim)</span>
+<span id="cb3-2"><a href=""></a></span>
+<span id="cb3-3"><a href=""></a><span class="co"># Specify LDA model</span></span>
+<span id="cb3-4"><a href=""></a>lda_spec <span class="ot">&lt;-</span> <span class="fu">discrim_linear</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb3-5"><a href=""></a>  <span class="fu">set_engine</span>(<span class="st">"MASS"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb3-6"><a href=""></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
+<span id="cb3-7"><a href=""></a></span>
+<span id="cb3-8"><a href=""></a><span class="do">##################################################</span></span>
+<span id="cb3-9"><a href=""></a></span>
+<span id="cb3-10"><a href=""></a><span class="co"># Specify QDA model</span></span>
+<span id="cb3-11"><a href=""></a>qda_spec <span class="ot">&lt;-</span> <span class="fu">discrim_quad</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb3-12"><a href=""></a>  <span class="fu">set_engine</span>(<span class="st">"MASS"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb3-13"><a href=""></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-5-workflow-creation" class="slide level2">
+<h2><u><strong>Step 5</strong></u>: Workflow Creation</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href=""></a><span class="co"># Create LDA workflow</span></span>
+<span id="cb4-2"><a href=""></a>lda_workflow <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href=""></a>  <span class="fu">add_recipe</span>(recipe) <span class="sc">%&gt;%</span></span>
+<span id="cb4-4"><a href=""></a>  <span class="fu">add_model</span>(lda_spec)</span>
+<span id="cb4-5"><a href=""></a></span>
+<span id="cb4-6"><a href=""></a><span class="do">##################################################</span></span>
+<span id="cb4-7"><a href=""></a></span>
+<span id="cb4-8"><a href=""></a><span class="co"># Create QDA workflow</span></span>
+<span id="cb4-9"><a href=""></a>qda_workflow <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb4-10"><a href=""></a>  <span class="fu">add_recipe</span>(recipe) <span class="sc">%&gt;%</span></span>
+<span id="cb4-11"><a href=""></a>  <span class="fu">add_model</span>(qda_spec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-6-model-training" class="slide level2">
+<h2><u><strong>Step 6</strong></u>: Model training</h2>
+<p><em>Includes cross-validation and tuning hyperparamters</em></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a><span class="co"># Fit the model using cross-validation</span></span>
+<span id="cb5-2"><a href=""></a>lda_cv_results <span class="ot">&lt;-</span> <span class="fu">fit_resamples</span>(</span>
+<span id="cb5-3"><a href=""></a>  lda_workflow,</span>
+<span id="cb5-4"><a href=""></a>  <span class="at">resamples =</span> cv_folds,</span>
+<span id="cb5-5"><a href=""></a>  <span class="at">metrics =</span> <span class="fu">metric_set</span>(roc_auc)</span>
+<span id="cb5-6"><a href=""></a>)</span>
+<span id="cb5-7"><a href=""></a></span>
+<span id="cb5-8"><a href=""></a><span class="co"># Fit final model on full training data</span></span>
+<span id="cb5-9"><a href=""></a>lda_final_fit <span class="ot">&lt;-</span> <span class="fu">fit</span>(lda_workflow, <span class="at">data =</span> training)</span>
+<span id="cb5-10"><a href=""></a></span>
+<span id="cb5-11"><a href=""></a><span class="co"># Make predictions on test set</span></span>
+<span id="cb5-12"><a href=""></a>lda_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(lda_final_fit, <span class="at">new_data =</span> testing)</span>
+<span id="cb5-13"><a href=""></a>lda_class_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(lda_final_fit, <span class="at">new_data =</span> testing, <span class="at">type =</span> <span class="st">"prob"</span>)</span>
+<span id="cb5-14"><a href=""></a></span>
+<span id="cb5-15"><a href=""></a><span class="do">##################################################</span></span>
+<span id="cb5-16"><a href=""></a></span>
+<span id="cb5-17"><a href=""></a><span class="co"># Fit the model using cross-validation</span></span>
+<span id="cb5-18"><a href=""></a>qda_cv_results <span class="ot">&lt;-</span> <span class="fu">fit_resamples</span>(</span>
+<span id="cb5-19"><a href=""></a>  qda_workflow,</span>
+<span id="cb5-20"><a href=""></a>  <span class="at">resamples =</span> cv_folds,</span>
+<span id="cb5-21"><a href=""></a>  <span class="at">metrics =</span> <span class="fu">metric_set</span>(roc_auc)</span>
+<span id="cb5-22"><a href=""></a>)</span>
+<span id="cb5-23"><a href=""></a></span>
+<span id="cb5-24"><a href=""></a><span class="co"># Fit final model on full training data</span></span>
+<span id="cb5-25"><a href=""></a>qda_final_fit <span class="ot">&lt;-</span> <span class="fu">fit</span>(qda_workflow, <span class="at">data =</span> training)</span>
+<span id="cb5-26"><a href=""></a></span>
+<span id="cb5-27"><a href=""></a><span class="co"># Make predictions on test set</span></span>
+<span id="cb5-28"><a href=""></a>qda_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(qda_final_fit, <span class="at">new_data =</span> testing)</span>
+<span id="cb5-29"><a href=""></a>qda_class_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(qda_final_fit, <span class="at">new_data =</span> testing, <span class="at">type =</span> <span class="st">"prob"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-7-model-performance-evaluation" class="slide level2">
+<h2><u><strong>Step 7</strong></u>: Model performance Evaluation</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href=""></a><span class="co"># Combine predictions with actual values</span></span>
+<span id="cb6-2"><a href=""></a>lda_results <span class="ot">&lt;-</span> <span class="fu">cbind</span>(</span>
+<span id="cb6-3"><a href=""></a>  lda_predictions,</span>
+<span id="cb6-4"><a href=""></a>  lda_class_pred,</span>
+<span id="cb6-5"><a href=""></a>  testing <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="st">`</span><span class="at">intervention_status</span><span class="st">`</span>)</span>
+<span id="cb6-6"><a href=""></a>) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-7"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">intervention_status =</span> <span class="fu">as.factor</span>(intervention_status))</span>
+<span id="cb6-8"><a href=""></a></span>
+<span id="cb6-9"><a href=""></a></span>
+<span id="cb6-10"><a href=""></a><span class="co"># Create confusion matrix</span></span>
+<span id="cb6-11"><a href=""></a>lda_conf_mat <span class="ot">&lt;-</span> <span class="fu">conf_mat</span>(lda_results, <span class="at">truth =</span> intervention_status, <span class="at">estimate =</span> .pred_class)</span>
+<span id="cb6-12"><a href=""></a></span>
+<span id="cb6-13"><a href=""></a><span class="co"># Plot ROC curve</span></span>
+<span id="cb6-14"><a href=""></a>lda_roc_curve <span class="ot">&lt;-</span> lda_results <span class="sc">%&gt;%</span></span>
+<span id="cb6-15"><a href=""></a>  <span class="fu">roc_curve</span>(intervention_status, .pred_Yes) <span class="sc">%&gt;%</span></span>
+<span id="cb6-16"><a href=""></a>  <span class="fu">autoplot</span>() <span class="sc">+</span></span>
+<span id="cb6-17"><a href=""></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"LDA ROC Curve"</span>)</span>
+<span id="cb6-18"><a href=""></a></span>
+<span id="cb6-19"><a href=""></a><span class="do">##################################################</span></span>
+<span id="cb6-20"><a href=""></a></span>
+<span id="cb6-21"><a href=""></a><span class="co"># Combine predictions with actual values</span></span>
+<span id="cb6-22"><a href=""></a>qda_results <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(</span>
+<span id="cb6-23"><a href=""></a>  qda_predictions,</span>
+<span id="cb6-24"><a href=""></a>  qda_class_pred,</span>
+<span id="cb6-25"><a href=""></a>  testing <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="st">`</span><span class="at">intervention_status</span><span class="st">`</span>)</span>
+<span id="cb6-26"><a href=""></a>) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-27"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">intervention_status =</span> <span class="fu">as.factor</span>(intervention_status))</span>
+<span id="cb6-28"><a href=""></a></span>
+<span id="cb6-29"><a href=""></a><span class="co"># Create confusion matrix</span></span>
+<span id="cb6-30"><a href=""></a>qda_conf_mat <span class="ot">&lt;-</span> <span class="fu">conf_mat</span>(qda_results, <span class="at">truth =</span> intervention_status, <span class="at">estimate =</span> .pred_class)</span>
+<span id="cb6-31"><a href=""></a></span>
+<span id="cb6-32"><a href=""></a><span class="co"># Plot ROC curve</span></span>
+<span id="cb6-33"><a href=""></a>qda_roc_curve <span class="ot">&lt;-</span> qda_results <span class="sc">%&gt;%</span></span>
+<span id="cb6-34"><a href=""></a>  <span class="fu">roc_curve</span>(intervention_status, .pred_Yes) <span class="sc">%&gt;%</span></span>
+<span id="cb6-35"><a href=""></a>  <span class="fu">autoplot</span>() <span class="sc">+</span></span>
+<span id="cb6-36"><a href=""></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"QDA ROC Curve"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section class="slide level2">
+
+
+<img data-src="presentation_slides_files/figure-revealjs/unnamed-chunk-20-1.png" width="960" class="r-stretch"></section>
+<section id="step-8-prediction" class="slide level2">
+<h2><u><strong>Step 8</strong></u>: Prediction</h2>
+<p>Finally, you can use your QDA workfow on new data!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a><span class="co"># Make predictions on new data using QDA workflow</span></span>
+<span id="cb7-2"><a href=""></a>qda_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(qda_final_fit, <span class="at">new_data =</span> new_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="summary" class="slide level2">
+<h2>Summary</h2>
+<ul>
+<li>Review theory behind LDA and QDA</li>
+<li>Implemented full LDA and QDA workflow in R using Tidymodels</li>
+</ul>
+</section></section>
+<section id="thank-you" class="title-slide slide level1 center">
+<h1>Thank you!</h1>
+
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+<p>ESM 596 Presentation</p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="presentation_slides_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="presentation_slides_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="presentation_slides_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="presentation_slides_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="presentation_slides_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="presentation_slides_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="presentation_slides_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="presentation_slides_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="presentation_slides_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="presentation_slides_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="presentation_slides_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': true,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"8\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'chalkboard': {"buttons":false},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
+    <script id="quarto-html-after-body" type="application/javascript">
+    window.document.addEventListener("DOMContentLoaded", function (event) {
+      const toggleBodyColorMode = (bsSheetEl) => {
+        const mode = bsSheetEl.getAttribute("data-mode");
+        const bodyEl = window.document.querySelector("body");
+        if (mode === "dark") {
+          bodyEl.classList.add("quarto-dark");
+          bodyEl.classList.remove("quarto-light");
+        } else {
+          bodyEl.classList.add("quarto-light");
+          bodyEl.classList.remove("quarto-dark");
+        }
+      }
+      const toggleBodyColorPrimary = () => {
+        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+        if (bsSheetEl) {
+          toggleBodyColorMode(bsSheetEl);
+        }
+      }
+      toggleBodyColorPrimary();  
+      const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+      tabsets.forEach(function(tabset) {
+        const tabby = new Tabby('#' + tabset.id);
+      });
+      const isCodeAnnotation = (el) => {
+        for (const clz of el.classList) {
+          if (clz.startsWith('code-annotation-')) {                     
+            return true;
+          }
+        }
+        return false;
+      }
+      const onCopySuccess = function(e) {
+        // button target
+        const button = e.trigger;
+        // don't keep focus
+        button.blur();
+        // flash "checked"
+        button.classList.add('code-copy-button-checked');
+        var currentTitle = button.getAttribute("title");
+        button.setAttribute("title", "Copied!");
+        let tooltip;
+        if (window.bootstrap) {
+          button.setAttribute("data-bs-toggle", "tooltip");
+          button.setAttribute("data-bs-placement", "left");
+          button.setAttribute("data-bs-title", "Copied!");
+          tooltip = new bootstrap.Tooltip(button, 
+            { trigger: "manual", 
+              customClass: "code-copy-button-tooltip",
+              offset: [0, -8]});
+          tooltip.show();    
+        }
+        setTimeout(function() {
+          if (tooltip) {
+            tooltip.hide();
+            button.removeAttribute("data-bs-title");
+            button.removeAttribute("data-bs-toggle");
+            button.removeAttribute("data-bs-placement");
+          }
+          button.setAttribute("title", currentTitle);
+          button.classList.remove('code-copy-button-checked');
+        }, 1000);
+        // clear code selection
+        e.clearSelection();
+      }
+      const getTextToCopy = function(trigger) {
+          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+      }
+      const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+        text: getTextToCopy
+      });
+      clipboard.on('success', onCopySuccess);
+      if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+        const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+          text: getTextToCopy,
+          container: window.document.getElementById('quarto-embedded-source-code-modal')
+        });
+        clipboardModal.on('success', onCopySuccess);
+      }
+        var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+        var mailtoRegex = new RegExp(/^mailto:/);
+          var filterRegex = new RegExp('/' + window.location.host + '/');
+        var isInternal = (href) => {
+            return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+        }
+        // Inspect non-navigation links and adorn them if external
+     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+        for (var i=0; i<links.length; i++) {
+          const link = links[i];
+          if (!isInternal(link.href)) {
+            // undo the damage that might have been done by quarto-nav.js in the case of
+            // links that we want to consider external
+            if (link.dataset.originalHref !== undefined) {
+              link.href = link.dataset.originalHref;
+            }
+          }
+        }
+      function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+        const config = {
+          allowHTML: true,
+          maxWidth: 500,
+          delay: 100,
+          arrow: false,
+          appendTo: function(el) {
+              return el.closest('section.slide') || el.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'light-border',
+          placement: 'bottom-start',
+        };
+        if (contentFn) {
+          config.content = contentFn;
+        }
+        if (onTriggerFn) {
+          config.onTrigger = onTriggerFn;
+        }
+        if (onUntriggerFn) {
+          config.onUntrigger = onUntriggerFn;
+        }
+          config['offset'] = [0,0];
+          config['maxWidth'] = 700;
+        window.tippy(el, config); 
+      }
+      const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+      for (var i=0; i<noterefs.length; i++) {
+        const ref = noterefs[i];
+        tippyHover(ref, function() {
+          // use id or data attribute instead here
+          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+          try { href = new URL(href).hash; } catch {}
+          const id = href.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note) {
+            return note.innerHTML;
+          } else {
+            return "";
+          }
+        });
+      }
+      const findCites = (el) => {
+        const parentEl = el.parentElement;
+        if (parentEl) {
+          const cites = parentEl.dataset.cites;
+          if (cites) {
+            return {
+              el,
+              cites: cites.split(' ')
+            };
+          } else {
+            return findCites(el.parentElement)
+          }
+        } else {
+          return undefined;
+        }
+      };
+      var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+      for (var i=0; i<bibliorefs.length; i++) {
+        const ref = bibliorefs[i];
+        const citeInfo = findCites(ref);
+        if (citeInfo) {
+          tippyHover(citeInfo.el, function() {
+            var popup = window.document.createElement('div');
+            citeInfo.cites.forEach(function(cite) {
+              var citeDiv = window.document.createElement('div');
+              citeDiv.classList.add('hanging-indent');
+              citeDiv.classList.add('csl-entry');
+              var biblioDiv = window.document.getElementById('ref-' + cite);
+              if (biblioDiv) {
+                citeDiv.innerHTML = biblioDiv.innerHTML;
+              }
+              popup.appendChild(citeDiv);
+            });
+            return popup.innerHTML;
+          });
+        }
+      }
+    });
+    </script>
+    
+
+</body></html>
