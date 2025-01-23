@@ -1012,14 +1012,7 @@ recipe <- recipe(intervention_status ~ .,
   # Create interaction terms for related environmental features
   step_interact(~ forest_cover_percent:percent_green_space) %>%
   step_interact(~ industrial_emissions:industrial_area_percent) %>%
-  step_interact(~ traffic_flow:vehicle_density) %>% 
-  
-  # Convert class to a factor
-  step_string2factor(all_nominal_predictors()) %>%
-  
-  # Create dummy variables for the outcome (necessary for some models)
-  step_dummy(all_nominal_predictors(), one_hot = TRUE)
-
+  step_interact(~ traffic_flow:vehicle_density) 
 
 ```
 
