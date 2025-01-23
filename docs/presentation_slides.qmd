@@ -715,8 +715,8 @@ to Compare Different ML Models
 
 ## How do I compare model performance?
 
--   Accuracy
--   Precision
+-   Accuracy = $\frac{TP + TN}{TP + TN + FP + FN}$
+-   Precision = $\frac{TP}{TP + FP}$
 -   **AUC** ← *We'll focus on this one!*
 
 ## Area Under Curve (AUC)
@@ -728,8 +728,8 @@ to Compare Different ML Models
 ## ROC Curve Calculation
 
 -   **Purpose:** Visualize the trade-off between TPR and FPR at various threshold settings.
--   **True Positive Rate (TPR)** = $$ ( \frac{\text{True Positives}}{\text{True Positives + False Negatives}} ) $$
--   **False Positive Rate (FPR)** = $$ ( \frac{\text{False Positives}}{\text{False Positives + True Negatives}} ) $$
+-   **True Positive Rate (TPR)** = $$ ( \frac{\text{TP}}{\text{TP + FN}} ) $$
+-   **False Positive Rate (FPR)** = $$ ( \frac{\text{FP}}{\text{FP + TN}} ) $$
 
 ## Comparing ML model performance
 
