@@ -911,6 +911,17 @@ county_data <- county_data %>%
   )
 ```
 
+---
+
+### We'll add more environmental variables to our county data.
+
+```{r}
+county_data %>% 
+  head(5) %>% 
+  gt()
+```
+
+
 ## [**Step 1**]{.underline}: Inspect the data
 
 *Visualize distribution of outcome to see if there's a **class imbalance***
