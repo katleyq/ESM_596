@@ -460,8 +460,8 @@ $$
 
 -   Classification method that allows for different covariance matrices between classes
 -   Similar to Linear Discriminant Analysis, but uses quadratic decision boundaries
--   More flexible than LDA but requires more parameters to be estimated
--   Particularly useful when class distributions have different shapes/spreads
+
+---
 
 ## QDA: Optimizing for k
 
